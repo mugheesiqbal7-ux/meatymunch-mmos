@@ -67,7 +67,12 @@ export default function Login({ v }) {
             >{showPw ? '🙈' : '👁'}</button>
           </div>
           {errorText && (
-            <div style={{ background: 'rgba(232,99,26,.15)', border: '1px solid rgba(232,99,26,.4)', color: '#f5a11f', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', margin: '2px 0 14px' }}>{errorText}</div>
+            <div style={{ background: 'rgba(232,99,26,.15)', border: '1px solid rgba(232,99,26,.4)', color: '#f5a11f', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', margin: '2px 0 14px' }}>
+              {errorText}
+              {v.authErrorDetail && (
+                <div style={{ marginTop: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'rgba(246,243,238,.6)', wordBreak: 'break-word' }}>Detail: {v.authErrorDetail}</div>
+              )}
+            </div>
           )}
           <button type="submit" disabled={submitting || v.authBusy} style={{ width: '100%', background: '#f07f13', color: '#17130f', border: 'none', borderRadius: '11px', padding: '14px', font: "700 15px Inter", cursor: submitting ? 'default' : 'pointer', opacity: submitting || v.authBusy ? 0.7 : 1, marginTop: '4px' }}>
             {submitting || v.authBusy ? '…' : t.login_signin}

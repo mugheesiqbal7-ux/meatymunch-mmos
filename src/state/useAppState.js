@@ -17,7 +17,7 @@ const initialState = {
   sickFrom: '', sickTo: '', sickReason: '', sickList: [],
   reportText: '', extraMeld: [], toast: null,
   // auth
-  authReady: false, profile: null, authError: null, authBusy: false, uid: null,
+  authReady: false, profile: null, authError: null, authErrorDetail: null, authBusy: false, uid: null,
   // team management (mgmt)
   teamUsers: [],
   // Stempeluhr
@@ -144,14 +144,21 @@ export function useAppState() {
     showToast,
     signIn: async (username, password) => {
       if (!isSupabaseConfigured) return { error: 'not_configured' };
-      setState({ authBusy: true, authError: null });
-      const { error } = await supabase.auth.signInWithPassword({
-        email: usernameToEmail(username), password,
-      });
-      if (error) { setState({ authBusy: false, authError: 'invalid' }); return { error: 'invalid' }; }
-      // onAuthStateChange lädt das Profil und setzt loggedIn.
-      setState({ authBusy: false });
-      return {};
+      setState({ authBusy: true, authError: null, authErrorDetail: null });
+      try {
+        const email = usernameToEmail(username);
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          setState({ authBusy: false, authError: 'invalid', authErrorDetail: `${error.status || ''} ${error.code || error.name || ''}: ${error.message || ''}`.trim() });
+          return { error: 'invalid' };
+        }
+        // onAuthStateChange lädt das Profil und setzt loggedIn.
+        setState({ authBusy: false });
+        return {};
+      } catch (e) {
+        setState({ authBusy: false, authError: 'invalid', authErrorDetail: 'NETZWERK/BLOCKIERT: ' + (e?.message || String(e)) });
+        return { error: 'net' };
+      }
     },
     logout: async () => {
       if (isSupabaseConfigured) await supabase.auth.signOut();
@@ -408,7 +415,7 @@ function deriveVals(s, a) {
     t, dir: s.lang === 'ar' ? 'rtl' : 'ltr',
     notLoggedIn: !s.loggedIn, loggedIn: s.loggedIn,
     // auth
-    authReady: s.authReady, authError: s.authError, authBusy: s.authBusy,
+    authReady: s.authReady, authError: s.authError, authErrorDetail: s.authErrorDetail, authBusy: s.authBusy,
     signIn: a.signIn, isConfigured: isSupabaseConfigured, profile: s.profile, showToast: a.showToast, uid: s.uid,
     // Stempeluhr
     clockEntry: s.clockEntry, clockBreak: s.clockBreak, clockLoaded: s.clockLoaded,
