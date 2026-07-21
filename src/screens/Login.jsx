@@ -4,13 +4,17 @@ export default function Login({ v }) {
   const { t } = v;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   async function submit(e) {
     e.preventDefault();
-    if (!username || !password || submitting) return;
+    // Versehentliche Leerzeichen (Handy-Autovervollständigung) entfernen.
+    const u = username.trim();
+    const p = password.trim();
+    if (!u || !p || submitting) return;
     setSubmitting(true);
-    await v.signIn(username, password);
+    await v.signIn(u, p);
     setSubmitting(false);
   }
 
@@ -46,13 +50,22 @@ export default function Login({ v }) {
             style={loginInput}
           />
           <label style={loginLabel}>{t.login_password}</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            style={loginInput}
-          />
+          <div style={{ position: 'relative', marginBottom: '14px' }}>
+            <input
+              type={showPw ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoCapitalize="none" autoCorrect="off" spellCheck={false}
+              placeholder="••••••••"
+              style={{ ...loginInput, marginBottom: 0, paddingRight: '46px' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw((s) => !s)}
+              aria-label={showPw ? 'Passwort verbergen' : 'Passwort anzeigen'}
+              style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '8px', fontSize: '17px', lineHeight: 1, color: 'rgba(246,243,238,.8)' }}
+            >{showPw ? '🙈' : '👁'}</button>
+          </div>
           {errorText && (
             <div style={{ background: 'rgba(232,99,26,.15)', border: '1px solid rgba(232,99,26,.4)', color: '#f5a11f', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', margin: '2px 0 14px' }}>{errorText}</div>
           )}
