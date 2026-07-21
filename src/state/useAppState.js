@@ -1,5 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { getT } from '../data/translations.js';
+import { supabase, isSupabaseConfigured, usernameToEmail } from '../lib/supabase.js';
+import { adminCall } from '../lib/admin.js';
+import { fetchOpenEntry, fetchOpenBreak, clockInDb, clockOutDb, startBreakDb, endBreakDb } from '../lib/timeclock.js';
 import {
   getChecklists, sops as sopsData, recipes as recipesData, chapters as chaptersData,
   inventory as inventoryData, shifts as shiftsData, modules as modulesData,
@@ -13,6 +16,12 @@ const initialState = {
   query: '', tempStation: 'Kühlschrank', tempValue: '', tempLog: [],
   sickFrom: '', sickTo: '', sickReason: '', sickList: [],
   reportText: '', extraMeld: [], toast: null,
+  // auth
+  authReady: false, profile: null, authError: null, authBusy: false, uid: null,
+  // team management (mgmt)
+  teamUsers: [],
+  // Stempeluhr
+  clockEntry: null, clockBreak: null, clockLoaded: false,
 };
 
 // ---------- STYLE HELPERS ----------
@@ -67,6 +76,47 @@ export function useAppState() {
     return () => window.removeEventListener('resize', onResize);
   }, [setState]);
 
+  // Auth: initiale Session prüfen + auf Änderungen hören; Rolle kommt aus profiles.
+  useEffect(() => {
+    if (!isSupabaseConfigured) { setState({ authReady: true }); return; }
+    let active = true;
+    async function loadProfile(userId) {
+      const { data } = await supabase
+        .from('profiles').select('username, display_name, role, active').eq('id', userId).single();
+      if (!active) return;
+      if (data && data.active) {
+        setState({ loggedIn: true, role: data.role, profile: data, uid: userId, authReady: true, authError: null });
+      } else if (data && !data.active) {
+        await supabase.auth.signOut();
+        setState({ loggedIn: false, role: 'ma', profile: null, uid: null, authReady: true, authError: 'deactivated' });
+      } else {
+        setState({ authReady: true });
+      }
+    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!active) return;
+      if (session?.user) loadProfile(session.user.id);
+      else setState({ authReady: true });
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) loadProfile(session.user.id);
+      else setState({ loggedIn: false, role: 'ma', profile: null, uid: null, clockEntry: null, clockBreak: null, clockLoaded: false });
+    });
+    return () => { active = false; sub.subscription.unsubscribe(); };
+  }, [setState]);
+
+  // Stempeluhr-Status laden, sobald eingeloggt.
+  useEffect(() => {
+    if (!isSupabaseConfigured || !state.uid) return;
+    let active = true;
+    (async () => {
+      const entry = await fetchOpenEntry(state.uid);
+      const brk = entry ? await fetchOpenBreak(entry.id) : null;
+      if (active) setState({ clockEntry: entry, clockBreak: brk, clockLoaded: true });
+    })();
+    return () => { active = false; };
+  }, [state.uid, setState]);
+
   const toastTimer = useMemo(() => ({ id: null }), []);
   const showToast = useCallback((msg) => {
     setState({ toast: msg });
@@ -92,7 +142,21 @@ export function useAppState() {
     }),
     setState,
     showToast,
-    logout: () => setState({ loggedIn: false }),
+    signIn: async (username, password) => {
+      if (!isSupabaseConfigured) return { error: 'not_configured' };
+      setState({ authBusy: true, authError: null });
+      const { error } = await supabase.auth.signInWithPassword({
+        email: usernameToEmail(username), password,
+      });
+      if (error) { setState({ authBusy: false, authError: 'invalid' }); return { error: 'invalid' }; }
+      // onAuthStateChange lädt das Profil und setzt loggedIn.
+      setState({ authBusy: false });
+      return {};
+    },
+    logout: async () => {
+      if (isSupabaseConfigured) await supabase.auth.signOut();
+      setState({ loggedIn: false, role: 'ma', profile: null });
+    },
   }), [setState, showToast]);
 
   const submitTemp = useCallback(() => {
@@ -125,9 +189,68 @@ export function useAppState() {
     showToast(getT(state.lang).ordered + ': ' + name);
   }, [state.lang, setState, showToast]);
 
+  // ----- Team-Verwaltung (nur mgmt; läuft über die Edge Function) -----
+  const refreshTeam = useCallback(async () => {
+    const res = await adminCall('list');
+    if (res.data?.users) setState({ teamUsers: res.data.users });
+    return res;
+  }, [setState]);
+  const createAccount = useCallback(async (payload) => {
+    const res = await adminCall('create', payload);
+    if (!res.error) await refreshTeam();
+    return res;
+  }, [refreshTeam]);
+  const setRoleFor = useCallback(async (user_id, role) => {
+    const res = await adminCall('set_role', { user_id, role });
+    if (!res.error) await refreshTeam();
+    return res;
+  }, [refreshTeam]);
+  const setPasswordFor = useCallback(async (user_id, password) => {
+    return adminCall('set_password', { user_id, password });
+  }, []);
+  const setActiveFor = useCallback(async (user_id, active) => {
+    const res = await adminCall('set_active', { user_id, active });
+    if (!res.error) await refreshTeam();
+    return res;
+  }, [refreshTeam]);
+
+  // ----- Stempeluhr -----
+  const clockIn = useCallback(async () => {
+    if (!state.uid || state.clockEntry) return;
+    try {
+      const entry = await clockInDb(state.uid);
+      setState({ clockEntry: entry, clockBreak: null });
+      showToast(getT(state.lang).clock_in_done);
+    } catch (e) { showToast(String(e.message || e)); }
+  }, [state.uid, state.clockEntry, state.lang, setState, showToast]);
+  const clockOut = useCallback(async () => {
+    if (!state.clockEntry) return;
+    if (state.clockBreak) await endBreakDb(state.clockBreak.id);
+    await clockOutDb(state.clockEntry.id);
+    setState({ clockEntry: null, clockBreak: null });
+    showToast(getT(state.lang).clock_out_done);
+  }, [state.clockEntry, state.clockBreak, state.lang, setState, showToast]);
+  const startBreak = useCallback(async () => {
+    if (!state.uid || !state.clockEntry || state.clockBreak) return;
+    const brk = await startBreakDb(state.uid, state.clockEntry.id);
+    setState({ clockBreak: brk });
+  }, [state.uid, state.clockEntry, state.clockBreak, setState]);
+  const endBreak = useCallback(async () => {
+    if (!state.clockBreak) return;
+    await endBreakDb(state.clockBreak.id);
+    setState({ clockBreak: null });
+  }, [state.clockBreak, setState]);
+
+  const signIn = actions.signIn;
   const vals = useMemo(
-    () => deriveVals(state, { ...actions, submitTemp, submitSick, submitReport, orderItem }),
-    [state, actions, submitTemp, submitSick, submitReport, orderItem]
+    () => deriveVals(state, {
+      ...actions, submitTemp, submitSick, submitReport, orderItem, signIn,
+      refreshTeam, createAccount, setRoleFor, setPasswordFor, setActiveFor,
+      clockIn, clockOut, startBreak, endBreak,
+    }),
+    [state, actions, submitTemp, submitSick, submitReport, orderItem, signIn,
+      refreshTeam, createAccount, setRoleFor, setPasswordFor, setActiveFor,
+      clockIn, clockOut, startBreak, endBreak]
   );
 
   return { state, vals };
@@ -237,9 +360,11 @@ function deriveVals(s, a) {
 
   // betrieb tiles
   const betriebTiles = [
+    { key: 'time', icon: '⏱️', tint: '#e6eef7', title: t.b_time, desc: t.b_time_desc },
     { key: 'shift', icon: '📅', tint: '#e9e0f6', title: t.b_shift, desc: 'Wer wann arbeitet — diese Woche.' },
     { key: 'sick', icon: '🤒', tint: '#fbe9d6', title: t.b_sick, desc: 'Abwesenheit rechtzeitig melden.' },
     { key: 'inv', icon: '📦', tint: '#e8f0e6', title: t.b_inv, desc: 'MIN/MAX-Bestand & Nachbestellung.' },
+    { key: 'suppliers', icon: '🚚', tint: '#e8f0fb', title: t.b_suppliers, desc: t.b_suppliers_desc },
     { key: 'temp', icon: '🌡️', tint: '#e6eef7', title: t.b_temp, desc: 'Temperaturen prüfen & dokumentieren.' },
     { key: 'report', icon: '📣', tint: '#f7ece0', title: t.b_report, desc: 'Probleme & Aufgaben melden.' },
     { key: 'onboard', icon: '🎓', tint: '#f0e6cd', title: t.b_onboard, desc: 'Einarbeitung & Schulungsplan.' },
@@ -264,6 +389,7 @@ function deriveVals(s, a) {
   const clStatus = cls.map((c) => { const pct = pctOf(c); return { title: c.title, pct, barStyle: barStyle(pct, c.accent) }; });
   const standorte = standorteRaw.map((x) => ({ ...x, dotStyle: { width: '9px', height: '9px', borderRadius: '50%', flex: 'none', background: x.on ? '#2e9e57' : 'rgba(246,243,238,.3)' } }));
 
+  const displayName = s.profile ? (s.profile.display_name || s.profile.username) : userNames[s.role];
   const now = new Date(); const h = now.getHours();
   const greeting = h < 11 ? (s.lang === 'de' ? 'Guten Morgen' : s.lang === 'en' ? 'Good morning' : s.lang === 'tr' ? 'Günaydın' : 'صباح الخير') : h < 18 ? (s.lang === 'de' ? 'Servus' : s.lang === 'en' ? 'Hello' : s.lang === 'tr' ? 'Merhaba' : 'مرحبا') : (s.lang === 'de' ? 'Guten Abend' : s.lang === 'en' ? 'Good evening' : s.lang === 'tr' ? 'İyi akşamlar' : 'مساء الخير');
   const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
@@ -281,13 +407,21 @@ function deriveVals(s, a) {
   return {
     t, dir: s.lang === 'ar' ? 'rtl' : 'ltr',
     notLoggedIn: !s.loggedIn, loggedIn: s.loggedIn,
+    // auth
+    authReady: s.authReady, authError: s.authError, authBusy: s.authBusy,
+    signIn: a.signIn, isConfigured: isSupabaseConfigured, profile: s.profile, showToast: a.showToast, uid: s.uid,
+    // Stempeluhr
+    clockEntry: s.clockEntry, clockBreak: s.clockBreak, clockLoaded: s.clockLoaded,
+    clockedIn: !!s.clockEntry, onBreak: !!s.clockBreak,
+    clockIn: a.clockIn, clockOut: a.clockOut, startBreak: a.startBreak, endBreak: a.endBreak,
+    openTimeSheet: () => a.openBetrieb('time'),
     // login
     loginMa: () => a.login('ma'), loginSl: () => a.login('sl'), loginMg: () => a.login('mgmt'),
     setLangDe: () => a.setLang('de'), setLangEn: () => a.setLang('en'), setLangTr: () => a.setLang('tr'), setLangAr: () => a.setLang('ar'),
     lg_de: langBtn(s.lang, 'de', 1), lg_en: langBtn(s.lang, 'en', 1), lg_tr: langBtn(s.lang, 'tr', 1), lg_ar: langBtn(s.lang, 'ar', 1),
     lg2_de: langBtn(s.lang, 'de', 0), lg2_en: langBtn(s.lang, 'en', 0), lg2_tr: langBtn(s.lang, 'tr', 0), lg2_ar: langBtn(s.lang, 'ar', 0),
     // chrome
-    roleLabel: roleName(s.role, t), userName: userNames[s.role], userInitial: userNames[s.role][0], roleDotStyle: { width: '8px', height: '8px', borderRadius: '50%', background: roleColors[s.role] },
+    roleLabel: roleName(s.role, t), userName: displayName, userInitial: (displayName || '?')[0].toUpperCase(), roleDotStyle: { width: '8px', height: '8px', borderRadius: '50%', background: roleColors[s.role] },
     taglineStyle: { font: "600 9px 'IBM Plex Mono'", letterSpacing: '.2em', textTransform: 'uppercase', color: '#b8912e', marginTop: '1px', display: isMobile ? 'none' : 'block' },
     showSidebar: !isMobile, showBottomNav: isMobile,
     mainPadStyle: { padding: isMobile ? '18px 16px 30px' : '28px 34px 40px', maxWidth: isMobile ? 'none' : '1160px', margin: '0 auto' },
@@ -324,12 +458,16 @@ function deriveVals(s, a) {
     onTempStation: (e) => a.setState({ tempStation: e.target.value }), onTempValue: (e) => a.setState({ tempValue: e.target.value }), submitTemp: () => a.submitTemp(),
     bReport: s.tab === 'betrieb' && s.bsub === 'report', reportText: s.reportText, onReport: (e) => a.setState({ reportText: e.target.value }), submitReport: () => a.submitReport(), meldungen,
     bOnboard: s.tab === 'betrieb' && s.bsub === 'onboard', modules, onbDone, onbTotal, onbBarStyle: barStyle(onbPct, '#f07f13'),
+    bTime: s.tab === 'betrieb' && s.bsub === 'time',
+    bSuppliers: s.tab === 'betrieb' && s.bsub === 'suppliers',
     // mehr
     isMehr: s.tab === 'mehr', canMgmt: s.role === 'mgmt', mgmtLocked: s.role !== 'mgmt', kpis, standorte, team,
-    setRoleMa: () => a.setRole('ma'), setRoleSl: () => a.setRole('sl'), setRoleMg: () => a.setRole('mgmt'),
-    rs_ma: pill(s.role === 'ma', '#f07f13'), rs_sl: pill(s.role === 'sl', '#7C3AED'), rs_mg: pill(s.role === 'mgmt', '#b8912e'),
     rl_de: pill(s.lang === 'de', '#17130f'), rl_en: pill(s.lang === 'en', '#17130f'), rl_tr: pill(s.lang === 'tr', '#17130f'), rl_ar: pill(s.lang === 'ar', '#17130f'),
     logout: () => a.logout(),
+    // team management (mgmt only)
+    teamUsers: s.teamUsers,
+    refreshTeam: a.refreshTeam, createAccount: a.createAccount,
+    setRoleFor: a.setRoleFor, setPasswordFor: a.setPasswordFor, setActiveFor: a.setActiveFor,
     // forms shared
     inputStyle, textareaStyle, labelStyle, primaryBtnStyle,
     // toast

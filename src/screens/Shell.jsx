@@ -3,6 +3,8 @@ import Start from './Start.jsx';
 import { ChecklistList, ChecklistDetail } from './Checklists.jsx';
 import { WissenHub, SopDetail, ChapterDetail, RecipeDetail } from './Wissen.jsx';
 import { BetriebLanding, BetriebShift, BetriebSick, BetriebInventory, BetriebTemp, BetriebReport, BetriebOnboarding } from './Betrieb.jsx';
+import TimeSheet from './TimeSheet.jsx';
+import Suppliers from './Suppliers.jsx';
 import Mehr from './Mehr.jsx';
 
 function Content({ v }) {
@@ -14,6 +16,8 @@ function Content({ v }) {
   if (v.chDetail) return <ChapterDetail v={v} />;
   if (v.rezDetail) return <RecipeDetail v={v} />;
   if (v.isBetrieb) return <BetriebLanding v={v} />;
+  if (v.bTime) return <TimeSheet v={v} />;
+  if (v.bSuppliers) return <Suppliers v={v} />;
   if (v.bShift) return <BetriebShift v={v} />;
   if (v.bSick) return <BetriebSick v={v} />;
   if (v.bInv) return <BetriebInventory v={v} />;

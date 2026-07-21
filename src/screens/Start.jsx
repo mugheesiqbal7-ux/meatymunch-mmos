@@ -1,7 +1,10 @@
+import ClockCard from './ClockCard.jsx';
+
 export default function Start({ v }) {
   const { t } = v;
   return (
     <div style={{ animation: 'mmfade .3s ease' }}>
+      <ClockCard v={v} />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '14px', marginBottom: '22px' }}>
         <div>
           <div style={{ font: "600 12px 'IBM Plex Mono',monospace", letterSpacing: '.12em', textTransform: 'uppercase', color: '#b8912e' }}>{v.dateLabel}</div>
