@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#17130f;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#2a2620;}
+  a{color:#c25f0d;text-decoration:none;} a:hover{color:#f07f13;}
+  ::selection{background:rgba(240,127,19,.28);}
+  ::-webkit-scrollbar{width:9px;height:9px;} ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.18);border-radius:6px;}
+  input,select,textarea,button{font-family:inherit;}
+  input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid #f07f13;outline-offset:2px;}
+  @keyframes mmfade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  @keyframes mmtoast{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  @keyframes mmpop{0%{transform:scale(.6);}60%{transform:scale(1.12);}100%{transform:scale(1);}}
+</style>
+</helmet>
+
+<sc-if value="{{ notLoggedIn }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh;background:radial-gradient(120% 90% at 78% 0%,#2a211a 0%,#17130f 60%);display:flex;flex-direction:column;color:#f6f3ee;padding:26px 22px 40px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;max-width:1080px;margin:0 auto;width:100%;">
+    <div style="font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.24em;text-transform:uppercase;color:rgba(246,243,238,.5);">MMOS · Mitarbeiter-App</div>
+    <div style="display:flex;gap:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:4px;">
+      <button onClick="{{ setLangDe }}" style="{{ lg_de }}">DE</button>
+      <button onClick="{{ setLangEn }}" style="{{ lg_en }}">EN</button>
+      <button onClick="{{ setLangTr }}" style="{{ lg_tr }}">TR</button>
+      <button onClick="{{ setLangAr }}" style="{{ lg_ar }}">AR</button>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;max-width:760px;margin:0 auto;width:100%;padding:32px 0;" dir="{{ dir }}">
+    <img src="assets/logo-icon.jpeg" alt="MeatyMunch" style="width:110px;height:110px;border-radius:24px;object-fit:cover;box-shadow:0 18px 50px rgba(0,0,0,.5);animation:mmpop .5s ease;">
+    <div style="font-family:'Archivo';font-weight:900;font-size:clamp(34px,7vw,52px);letter-spacing:-.02em;margin:22px 0 2px;text-align:center;line-height:1;">MEATY<span style="color:#f07f13;">MUNCH</span></div>
+    <div style="font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.34em;text-transform:uppercase;color:#b8912e;">{{ t.tagline }}</div>
+    <div style="font-size:16px;color:rgba(246,243,238,.7);margin:20px 0 30px;text-align:center;max-width:440px;line-height:1.5;">{{ t.login_sub }}</div>
+    <div style="font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:rgba(246,243,238,.45);margin-bottom:14px;">{{ t.login_choose }}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;width:100%;">
+      <button onClick="{{ loginMa }}" style="text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-top:3px solid #f07f13;border-radius:14px;padding:22px 20px;color:#f6f3ee;cursor:pointer;transition:.15s;" style-hover="background:rgba(255,255,255,.1);transform:translateY(-2px);">
+        <div style="font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#f5a11f;">01</div>
+        <div style="font-family:'Archivo';font-weight:800;font-size:21px;margin:6px 0 4px;">{{ t.role_ma }}</div>
+        <div style="font-size:13px;color:rgba(246,243,238,.6);line-height:1.45;">{{ t.role_ma_d }}</div>
+      </button>
+      <button onClick="{{ loginSl }}" style="text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-top:3px solid #7C3AED;border-radius:14px;padding:22px 20px;color:#f6f3ee;cursor:pointer;transition:.15s;" style-hover="background:rgba(255,255,255,.1);transform:translateY(-2px);">
+        <div style="font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#a879f5;">02</div>
+        <div style="font-family:'Archivo';font-weight:800;font-size:21px;margin:6px 0 4px;">{{ t.role_sl }}</div>
+        <div style="font-size:13px;color:rgba(246,243,238,.6);line-height:1.45;">{{ t.role_sl_d }}</div>
+      </button>
+      <button onClick="{{ loginMg }}" style="text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-top:3px solid #b8912e;border-radius:14px;padding:22px 20px;color:#f6f3ee;cursor:pointer;transition:.15s;" style-hover="background:rgba(255,255,255,.1);transform:translateY(-2px);">
+        <div style="font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#d8b45c;">03</div>
+        <div style="font-family:'Archivo';font-weight:800;font-size:21px;margin:6px 0 4px;">{{ t.role_mgmt }}</div>
+        <div style="font-size:13px;color:rgba(246,243,238,.6);line-height:1.45;">{{ t.role_mgmt_d }}</div>
+      </button>
+    </div>
+    <div style="margin-top:22px;font:500 12px 'IBM Plex Mono',monospace;color:rgba(246,243,238,.4);letter-spacing:.05em;">{{ t.login_pinhint }}</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+<div dir="{{ dir }}" style="height:100vh;display:flex;flex-direction:column;background:#f4f1ec;overflow:hidden;">
+
+  <!-- TOP BAR -->
+  <header style="flex:none;background:#17130f;color:#f6f3ee;display:flex;align-items:center;gap:14px;padding:0 16px;height:60px;border-bottom:1px solid rgba(255,255,255,.08);z-index:20;">
+    <img src="assets/logo-icon.jpeg" alt="" style="width:38px;height:38px;border-radius:9px;object-fit:cover;flex:none;">
+    <div style="line-height:1;">
+      <div style="font-family:'Archivo';font-weight:900;font-size:17px;letter-spacing:-.01em;">MEATY<span style="color:#f07f13;">MUNCH</span></div>
+      <div style="{{ taglineStyle }}">{{ t.tagline }}</div>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;gap:3px;background:rgba(255,255,255,.06);border-radius:8px;padding:3px;">
+      <button onClick="{{ setLangDe }}" style="{{ lg2_de }}">DE</button>
+      <button onClick="{{ setLangEn }}" style="{{ lg2_en }}">EN</button>
+      <button onClick="{{ setLangTr }}" style="{{ lg2_tr }}">TR</button>
+      <button onClick="{{ setLangAr }}" style="{{ lg2_ar }}">AR</button>
+    </div>
+    <button onClick="{{ goMehr }}" style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:5px 6px 5px 12px;color:#f6f3ee;cursor:pointer;" style-hover="background:rgba(255,255,255,.12);">
+      <span style="{{ roleDotStyle }}"></span>
+      <span style="font:600 12px Inter;letter-spacing:.02em;">{{ roleLabel }}</span>
+      <span style="width:28px;height:28px;border-radius:50%;background:#f07f13;color:#17130f;display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:13px;">{{ userInitial }}</span>
+    </button>
+  </header>
+
+  <div style="flex:1;display:flex;overflow:hidden;">
+    <!-- SIDEBAR (desktop) -->
+    <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ false }}">
+    <nav style="flex:none;width:236px;background:#1e1813;border-right:1px solid rgba(255,255,255,.06);padding:16px 12px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;">
+      <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,243,238,.32);padding:6px 14px 8px;">Navigation</div>
+      <button onClick="{{ goStart }}" style="{{ ns_start }}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>{{ t.nav_start }}</button>
+      <button onClick="{{ goCheck }}" style="{{ ns_check }}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>{{ t.nav_check }}</button>
+      <button onClick="{{ goWissen }}" style="{{ ns_wissen }}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>{{ t.nav_wissen }}</button>
+      <button onClick="{{ goBetrieb }}" style="{{ ns_betrieb }}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ t.nav_betrieb }}</button>
+      <button onClick="{{ goMehr }}" style="{{ ns_mehr }}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>{{ t.nav_mehr }}</button>
+      <div style="flex:1;"></div>
+      <div style="background:rgba(240,127,19,.1);border:1px solid rgba(240,127,19,.25);border-radius:12px;padding:14px;margin:8px 4px;">
+        <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#f5a11f;margin-bottom:6px;">{{ t.level }} {{ level }}</div>
+        <div style="height:7px;background:rgba(255,255,255,.12);border-radius:5px;overflow:hidden;"><div style="{{ xpBarStyle }}"></div></div>
+        <div style="font-size:11px;color:rgba(246,243,238,.6);margin-top:7px;">{{ xp }} / {{ xpNext }} XP · {{ streak }}🔥</div>
+      </div>
+    </nav>
+    </sc-if>
+
+    <!-- MAIN CONTENT -->
+    <main style="flex:1;overflow-y:auto;position:relative;">
+      <div style="{{ mainPadStyle }}" key="{{ routeKey }}">
+
+        <!-- ============ START ============ -->
+        <sc-if value="{{ isStart }}" hint-placeholder-val="{{ true }}">
+        <div style="animation:mmfade .3s ease;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;margin-bottom:22px;">
+            <div>
+              <div style="font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#b8912e;">{{ dateLabel }}</div>
+              <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(26px,4.5vw,38px);letter-spacing:-.02em;margin:6px 0 0;color:#17130f;">{{ greeting }}, {{ userName }}.</h1>
+              <div style="font-size:15px;color:#7c756c;margin-top:4px;">{{ t.home_sub }}</div>
+            </div>
+            <div style="display:flex;gap:4px;background:#fff;border:1px solid #e4ded4;border-radius:10px;padding:4px;">
+              <button onClick="{{ hv0 }}" style="{{ hv_0 }}">{{ t.hv_focus }}</button>
+              <button onClick="{{ hv1 }}" style="{{ hv_1 }}">{{ t.hv_cards }}</button>
+              <button onClick="{{ hv2 }}" style="{{ hv_2 }}">{{ t.hv_dash }}</button>
+            </div>
+          </div>
+
+          <!-- Variant: FOKUS -->
+          <sc-if value="{{ homeFocus }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;align-items:start;">
+            <div style="grid-column:1/-1;background:linear-gradient(110deg,#1e1813,#2c221a);color:#f6f3ee;border-radius:18px;padding:26px 26px;display:flex;gap:26px;align-items:center;flex-wrap:wrap;">
+              <div style="position:relative;width:120px;height:120px;flex:none;">
+                <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/><circle cx="60" cy="60" r="52" fill="none" stroke="#f07f13" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="{{ ringOffset }}" style="transition:.6s;"/></svg>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-family:'Archivo';font-weight:900;font-size:30px;">{{ openPct }}%</div><div style="font:600 9px 'IBM Plex Mono';letter-spacing:.1em;color:rgba(246,243,238,.55);text-transform:uppercase;">{{ t.today }}</div></div>
+              </div>
+              <div style="flex:1;min-width:200px;">
+                <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#f5a11f;">{{ t.priority }}</div>
+                <div style="font-family:'Archivo';font-weight:800;font-size:23px;margin:5px 0 4px;">{{ t.cl_oeffnen }}</div>
+                <div style="font-size:14px;color:rgba(246,243,238,.68);margin-bottom:16px;">{{ openDone }} / {{ openTotal }} {{ t.steps_done }}</div>
+                <button onClick="{{ openOeffnen }}" style="background:#f07f13;color:#17130f;border:none;border-radius:10px;padding:12px 22px;font:700 14px Inter;cursor:pointer;" style-hover="background:#ff8f26;">{{ t.continue }} →</button>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:20px;">
+              <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:14px;">{{ t.quickactions }}</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <button onClick="{{ goCheck }}" style="{{ qaStyle }}"><span style="{{ qaIcon1 }}">✓</span>{{ t.nav_check }}</button>
+                <button onClick="{{ openSopList }}" style="{{ qaStyle }}"><span style="{{ qaIcon2 }}">?</span>{{ t.qa_sop }}</button>
+                <button onClick="{{ openRezList }}" style="{{ qaStyle }}"><span style="{{ qaIcon3 }}">◆</span>{{ t.qa_recipe }}</button>
+                <button onClick="{{ openTemp }}" style="{{ qaStyle }}"><span style="{{ qaIcon4 }}">°</span>{{ t.qa_temp }}</button>
+                <button onClick="{{ openSick }}" style="{{ qaStyle }}"><span style="{{ qaIcon5 }}">+</span>{{ t.qa_sick }}</button>
+                <button onClick="{{ openReport }}" style="{{ qaStyle }}"><span style="{{ qaIcon6 }}">!</span>{{ t.qa_report }}</button>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:20px;">
+              <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:14px;">{{ t.myshift }}</div>
+              <div style="display:flex;align-items:baseline;gap:10px;"><div style="font-family:'Archivo';font-weight:800;font-size:32px;color:#17130f;">{{ shiftToday }}</div><div style="font-size:13px;color:#7c756c;">{{ shiftRole }}</div></div>
+              <div style="height:1px;background:#eee7dc;margin:14px 0;"></div>
+              <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:10px;">{{ t.badges }}</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <sc-for list="{{ badges }}" as="b" hint-placeholder-count="4"><div title="{{ b.name }}" style="{{ b.style }}">{{ b.icon }}</div></sc-for>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- Variant: KARTEN -->
+          <sc-if value="{{ homeCards }}" hint-placeholder-val="{{ false }}">
+          <div style="columns:320px;column-gap:16px;">
+            <sc-for list="{{ feedCards }}" as="c" hint-placeholder-count="5">
+            <div style="break-inside:avoid;margin-bottom:16px;background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;border-top:3px solid {{ c.accent }};">
+              <div style="padding:18px 20px;">
+                <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:{{ c.accent }};">{{ c.kicker }}</div>
+                <div style="font-family:'Archivo';font-weight:800;font-size:19px;margin:6px 0 6px;color:#17130f;">{{ c.title }}</div>
+                <div style="font-size:14px;color:#6c655c;line-height:1.5;">{{ c.body }}</div>
+                <button onClick="{{ c.action }}" style="margin-top:14px;background:#f4f1ec;border:1px solid #e4ded4;border-radius:9px;padding:9px 16px;font:700 13px Inter;color:#17130f;cursor:pointer;" style-hover="background:#ece6dc;">{{ c.cta }} →</button>
+              </div>
+            </div>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <!-- Variant: DASHBOARD -->
+          <sc-if value="{{ homeDash }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;">
+              <sc-for list="{{ statTiles }}" as="s" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #e4ded4;border-radius:14px;padding:16px 18px;border-left:3px solid {{ s.accent }};">
+                <div style="font:600 10px 'IBM Plex Mono';letter-spacing:.1em;text-transform:uppercase;color:#7c756c;">{{ s.label }}</div>
+                <div style="font-family:'Archivo';font-weight:900;font-size:28px;color:#17130f;margin-top:5px;">{{ s.value }}</div>
+                <div style="font-size:12px;color:{{ s.accent }};font-weight:600;margin-top:2px;">{{ s.delta }}</div>
+              </div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;">
+              <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:20px;">
+                <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:12px;">{{ t.checklist_status }}</div>
+                <sc-for list="{{ clStatus }}" as="cs" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f0eae0;">
+                  <div style="flex:1;font-size:14px;font-weight:600;color:#17130f;">{{ cs.title }}</div>
+                  <div style="width:110px;height:7px;background:#f0eae0;border-radius:5px;overflow:hidden;"><div style="{{ cs.barStyle }}"></div></div>
+                  <div style="font:600 12px 'IBM Plex Mono';color:#7c756c;width:42px;text-align:right;">{{ cs.pct }}%</div>
+                </div>
+                </sc-for>
+              </div>
+              <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:20px;">
+                <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:12px;">{{ t.open_reports }}</div>
+                <sc-for list="{{ meldungen }}" as="m" hint-placeholder-count="3">
+                <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f0eae0;">
+                  <span style="{{ m.dotStyle }}"></span>
+                  <div style="flex:1;"><div style="font-size:14px;color:#2a2620;">{{ m.text }}</div><div style="font:500 11px 'IBM Plex Mono';color:#a49c90;margin-top:2px;">{{ m.meta }}</div></div>
+                </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- ============ CHECKLISTEN (list) ============ -->
+        <sc-if value="{{ isCheck }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;">
+          <div style="margin-bottom:20px;"><div style="font:600 12px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#b8912e;">{{ t.nav_check }}</div><h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,34px);margin:6px 0 0;color:#17130f;letter-spacing:-.02em;">{{ t.check_h }}</h1><div style="font-size:15px;color:#7c756c;margin-top:4px;">{{ t.check_sub }}</div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;">
+            <sc-for list="{{ checklistCards }}" as="cl" hint-placeholder-count="4">
+            <button onClick="{{ cl.open }}" style="text-align:left;background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:20px;cursor:pointer;transition:.15s;border-top:3px solid {{ cl.accent }};" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.06);">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div style="font-family:'Archivo';font-weight:800;font-size:19px;color:#17130f;">{{ cl.title }}</div>
+                <div style="{{ cl.badgeStyle }}">{{ cl.done }}/{{ cl.total }}</div>
+              </div>
+              <div style="font-size:13px;color:#7c756c;margin:6px 0 14px;line-height:1.45;">{{ cl.desc }}</div>
+              <div style="height:8px;background:#f0eae0;border-radius:5px;overflow:hidden;"><div style="{{ cl.barStyle }}"></div></div>
+            </button>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ CHECKLIST DETAIL ============ -->
+        <sc-if value="{{ clDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:720px;">
+          <button onClick="{{ back }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin:14px 0 8px;">
+            <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,32px);margin:0;color:#17130f;letter-spacing:-.02em;">{{ cl.title }}</h1>
+            <button onClick="{{ resetCl }}" style="background:transparent;border:1px solid #e4ded4;border-radius:8px;padding:7px 14px;font:600 12px Inter;color:#7c756c;cursor:pointer;" style-hover="border-color:#c9c0b2;">{{ t.reset }}</button>
+          </div>
+          <div style="height:9px;background:#e9e2d6;border-radius:6px;overflow:hidden;margin-bottom:6px;"><div style="{{ cl.barStyle }}"></div></div>
+          <div style="font:600 12px 'IBM Plex Mono';color:#7c756c;margin-bottom:18px;">{{ cl.done }} / {{ cl.total }} · {{ cl.pct }}%</div>
+          <sc-if value="{{ cl.complete }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#e8f5ec;border:1px solid #bfe3cb;border-left:3px solid #2e9e57;border-radius:12px;padding:16px 18px;margin-bottom:16px;color:#1c6d3c;font-weight:600;display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">✓</span>{{ t.check_alldone }}</div>
+          </sc-if>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;">
+            <sc-for list="{{ cl.items }}" as="it" hint-placeholder-count="8">
+            <button onClick="{{ it.toggle }}" style="width:100%;display:flex;align-items:flex-start;gap:14px;padding:15px 18px;background:transparent;border:none;border-bottom:1px solid #f0eae0;cursor:pointer;text-align:left;" style-hover="background:#faf7f2;">
+              <span style="{{ it.boxStyle }}"><sc-if value="{{ it.checked }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="3.2"><polyline points="4,12.5 9.5,18 20,5.5"/></svg></sc-if></span>
+              <span style="{{ it.textStyle }}">{{ it.text }}</span>
+            </button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ cl.weekly }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#f7f0e2;border:1px solid #e5d6b3;border-left:3px solid #b8912e;border-radius:12px;padding:16px 18px;margin-top:16px;"><div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#8a6a15;margin-bottom:6px;">{{ t.weekly }}</div><div style="font-size:14px;color:#5c5340;line-height:1.5;">{{ cl.weekly }}</div></div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- ============ WISSEN (hub) ============ -->
+        <sc-if value="{{ isWissen }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;">
+          <div style="margin-bottom:18px;"><div style="font:600 12px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#b8912e;">{{ t.nav_wissen }}</div><h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,34px);margin:6px 0 0;color:#17130f;letter-spacing:-.02em;">{{ t.wissen_h }}</h1></div>
+          <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="{{ t.search_ph }}" style="width:100%;max-width:520px;background:#fff;border:1px solid #e4ded4;border-radius:11px;padding:13px 16px;font-size:15px;color:#2a2620;margin-bottom:16px;">
+          <div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;">
+            <button onClick="{{ wsubSop }}" style="{{ ws_sop }}">{{ t.tab_sop }}</button>
+            <button onClick="{{ wsubHb }}" style="{{ ws_hb }}">{{ t.tab_hb }}</button>
+            <button onClick="{{ wsubRez }}" style="{{ ws_rez }}">{{ t.tab_rez }}</button>
+          </div>
+
+          <sc-if value="{{ wIsSop }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;">
+            <sc-for list="{{ sopsF }}" as="s" hint-placeholder-count="3">
+            <button onClick="{{ s.open }}" style="text-align:left;background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;cursor:pointer;padding:0;transition:.15s;" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.06);">
+              <div style="height:150px;background:#eee url('{{ s.img }}') center/cover;"></div>
+              <div style="padding:16px 18px;"><div style="font:600 11px 'IBM Plex Mono';letter-spacing:.1em;color:#f07f13;">SOP {{ s.no }}</div><div style="font-family:'Archivo';font-weight:800;font-size:18px;color:#17130f;margin:4px 0 4px;">{{ s.title }}</div><div style="font-size:13px;color:#7c756c;line-height:1.4;">{{ s.summary }}</div></div>
+            </button>
+            </sc-for>
+            <div style="background:#f7f4ee;border:1px dashed #d6cdbd;border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:center;color:#a49c90;"><div style="font-family:'Archivo';font-weight:800;font-size:17px;color:#8a8072;">{{ t.more_sop }}</div><div style="font-size:13px;margin-top:5px;line-height:1.4;">Grill · Chicken · Fritteuse · Burger Build · Verpackung — {{ t.in_prep }}</div></div>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ wIsHb }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;max-width:760px;">
+            <sc-for list="{{ chaptersF }}" as="c" hint-placeholder-count="8">
+            <button onClick="{{ c.open }}" style="width:100%;display:flex;align-items:center;gap:16px;padding:15px 18px;background:transparent;border:none;border-bottom:1px solid #f0eae0;cursor:pointer;text-align:left;" style-hover="background:#faf7f2;">
+              <span style="font-family:'Archivo';font-weight:800;font-size:18px;color:#17130f;width:30px;flex:none;">{{ c.no }}</span>
+              <span style="flex:1;"><span style="display:block;font-weight:600;font-size:15px;color:#17130f;">{{ c.title }}</span><span style="display:block;font-size:13px;color:#7c756c;margin-top:2px;">{{ c.desc }}</span></span>
+              <span style="{{ c.statusStyle }}">{{ c.statusLabel }}</span>
+            </button>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ wIsRez }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;">
+            <sc-for list="{{ recipesF }}" as="r" hint-placeholder-count="2">
+            <button onClick="{{ r.open }}" style="text-align:left;background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;cursor:pointer;padding:0;transition:.15s;" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.06);">
+              <div style="height:220px;background:#f2ead9 url('{{ r.img }}') center/cover;"></div>
+              <div style="padding:16px 18px;"><div style="font:600 11px 'IBM Plex Mono';letter-spacing:.1em;color:#7C3AED;">{{ t.buildcard }}</div><div style="font-family:'Archivo';font-weight:800;font-size:20px;color:#17130f;margin:4px 0 4px;">{{ r.name }}</div><div style="font-size:13px;color:#7c756c;">{{ r.steps.length }} {{ t.layers }} · {{ r.patty }}</div></div>
+            </button>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- ============ SOP DETAIL ============ -->
+        <sc-if value="{{ sopDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:900px;">
+          <button onClick="{{ back }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <div style="display:flex;align-items:baseline;gap:12px;margin:14px 0 4px;"><span style="font:600 13px 'IBM Plex Mono';letter-spacing:.1em;color:#f07f13;">SOP {{ sop.no }}</span></div>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(26px,4.5vw,38px);margin:0 0 16px;color:#17130f;letter-spacing:-.02em;">{{ sop.title }}</h1>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px;align-items:start;">
+            <img src="{{ sop.img }}" alt="{{ sop.title }}" style="width:100%;border-radius:14px;border:1px solid #e4ded4;box-shadow:0 8px 24px rgba(0,0,0,.08);">
+            <div>
+              <div style="background:#fff;border:1px solid #e4ded4;border-radius:14px;padding:18px 20px;margin-bottom:14px;">
+                <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:10px;">{{ t.key_points }}</div>
+                <sc-for list="{{ sop.points }}" as="p" hint-placeholder-count="4">
+                <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f3ede3;"><span style="color:#2e9e57;font-weight:800;flex:none;">✓</span><span style="font-size:14px;color:#2a2620;line-height:1.45;">{{ p }}</span></div>
+                </sc-for>
+              </div>
+              <div style="background:#fbe9d6;border:1px solid #f0c79a;border-left:3px solid #e8631a;border-radius:12px;padding:16px 18px;"><div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#b1470f;margin-bottom:6px;">{{ t.important }}</div><div style="font-size:14px;color:#7a3d15;line-height:1.5;">{{ sop.important }}</div></div>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ CHAPTER DETAIL ============ -->
+        <sc-if value="{{ chDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:720px;">
+          <button onClick="{{ back }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <div style="display:flex;align-items:baseline;gap:12px;margin:14px 0 2px;"><span style="font-family:'Archivo';font-weight:900;font-size:44px;color:#e9e2d6;line-height:.9;">{{ chapter.no }}</span></div>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,34px);margin:0 0 6px;color:#17130f;letter-spacing:-.02em;">{{ chapter.title }}</h1>
+          <div style="font:500 12px 'IBM Plex Mono';color:#a49c90;margin-bottom:18px;">{{ t.readtime }} {{ chapter.read }}</div>
+          <p style="font-size:17px;line-height:1.6;color:#3a352e;margin:0 0 20px;">{{ chapter.lead }}</p>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:14px;padding:20px 22px;">
+            <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:12px;">{{ t.key_points }}</div>
+            <sc-for list="{{ chapter.points }}" as="p" hint-placeholder-count="4">
+            <div style="display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #f3ede3;"><span style="color:#b8912e;font-weight:800;flex:none;">▸</span><span style="font-size:15px;color:#2a2620;line-height:1.5;">{{ p }}</span></div>
+            </sc-for>
+          </div>
+          <div style="margin-top:16px;font-size:13px;color:#a49c90;font-style:italic;">{{ t.fulltext_note }}</div>
+        </div>
+        </sc-if>
+
+        <!-- ============ RECIPE DETAIL ============ -->
+        <sc-if value="{{ rezDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:920px;">
+          <button onClick="{{ back }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <h1 style="font-family:'Archivo';font-weight:900;font-size:clamp(28px,5vw,42px);margin:14px 0 4px;color:#17130f;letter-spacing:-.02em;">{{ recipe.name }}</h1>
+          <div style="font-size:15px;color:#7c756c;margin-bottom:18px;">{{ recipe.bun }} · {{ recipe.patty }} · {{ t.tap_steps }}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px;align-items:start;">
+            <img src="{{ recipe.img }}" alt="{{ recipe.name }}" style="width:100%;border-radius:14px;border:1px solid #e4ded4;box-shadow:0 8px 24px rgba(0,0,0,.08);">
+            <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;">
+              <div style="background:#2a1c47;color:#fff;padding:13px 18px;font-family:'Archivo';font-weight:800;font-size:15px;letter-spacing:.02em;">{{ t.build_order }}</div>
+              <sc-for list="{{ recipe.steps }}" as="st" hint-placeholder-count="10">
+              <button onClick="{{ st.toggle }}" style="width:100%;display:flex;align-items:center;gap:13px;padding:12px 18px;background:transparent;border:none;border-bottom:1px solid #f0eae0;cursor:pointer;text-align:left;" style-hover="background:#faf7f2;">
+                <span style="{{ st.numStyle }}">{{ st.n }}</span>
+                <span style="{{ st.textStyle }}">{{ st.text }}</span>
+                <sc-if value="{{ st.checked }}" hint-placeholder-val="{{ false }}"><span style="color:#2e9e57;font-weight:800;">✓</span></sc-if>
+              </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ BETRIEB (landing) ============ -->
+        <sc-if value="{{ isBetrieb }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;">
+          <div style="margin-bottom:20px;"><div style="font:600 12px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#b8912e;">{{ t.nav_betrieb }}</div><h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,34px);margin:6px 0 0;color:#17130f;letter-spacing:-.02em;">{{ t.betrieb_h }}</h1></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px;">
+            <sc-for list="{{ betriebTiles }}" as="b" hint-placeholder-count="6">
+            <button onClick="{{ b.open }}" style="text-align:left;background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:22px 20px;cursor:pointer;transition:.15s;" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.06);">
+              <div style="width:44px;height:44px;border-radius:12px;background:{{ b.tint }};display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;">{{ b.icon }}</div>
+              <div style="font-family:'Archivo';font-weight:800;font-size:18px;color:#17130f;">{{ b.title }}</div>
+              <div style="font-size:13px;color:#7c756c;margin-top:4px;line-height:1.45;">{{ b.desc }}</div>
+            </button>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ BETRIEB: SCHICHTPLAN ============ -->
+        <sc-if value="{{ bShift }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:760px;">
+          <button onClick="{{ backBetrieb }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,32px);margin:14px 0 4px;color:#17130f;letter-spacing:-.02em;">{{ t.b_shift }}</h1>
+          <div style="font-size:14px;color:#7c756c;margin-bottom:18px;">{{ t.opening_hours }}: Mo–Sa · 10:30–20:00</div>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;">
+            <sc-for list="{{ shifts }}" as="d" hint-placeholder-count="6">
+            <div style="{{ d.rowStyle }}">
+              <div style="width:120px;flex:none;"><div style="font-weight:700;color:#17130f;">{{ d.day }}</div><div style="font:500 11px 'IBM Plex Mono';color:#a49c90;">{{ d.date }}</div></div>
+              <div style="flex:1;display:flex;flex-wrap:wrap;gap:6px;">
+                <sc-for list="{{ d.slots }}" as="sl" hint-placeholder-count="2"><span style="{{ sl.style }}">{{ sl.name }} · {{ sl.time }}</span></sc-for>
+              </div>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ BETRIEB: KRANKMELDUNG ============ -->
+        <sc-if value="{{ bSick }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:560px;">
+          <button onClick="{{ backBetrieb }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,32px);margin:14px 0 4px;color:#17130f;letter-spacing:-.02em;">{{ t.b_sick }}</h1>
+          <div style="font-size:14px;color:#7c756c;margin-bottom:18px;">{{ t.sick_sub }}</div>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:22px;">
+            <label style="{{ labelStyle }}">{{ t.sick_from }}</label>
+            <input type="date" value="{{ sickFrom }}" onInput="{{ onSickFrom }}" style="{{ inputStyle }}">
+            <label style="{{ labelStyle }}">{{ t.sick_to }}</label>
+            <input type="date" value="{{ sickTo }}" onInput="{{ onSickTo }}" style="{{ inputStyle }}">
+            <label style="{{ labelStyle }}">{{ t.sick_reason }}</label>
+            <textarea value="{{ sickReason }}" onInput="{{ onSickReason }}" placeholder="{{ t.sick_ph }}" style="{{ textareaStyle }}"></textarea>
+            <button onClick="{{ submitSick }}" style="{{ primaryBtnStyle }}">{{ t.submit }}</button>
+          </div>
+          <sc-if value="{{ hasSick }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;"><div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:8px;">{{ t.sick_list }}</div>
+            <sc-for list="{{ sickList }}" as="s" hint-placeholder-count="1"><div style="background:#fff;border:1px solid #e4ded4;border-radius:12px;padding:14px 16px;margin-bottom:8px;"><div style="font-weight:600;color:#17130f;">{{ s.range }}</div><div style="font-size:13px;color:#7c756c;margin-top:2px;">{{ s.reason }}</div></div></sc-for>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- ============ BETRIEB: INVENTUR ============ -->
+        <sc-if value="{{ bInv }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:760px;">
+          <button onClick="{{ backBetrieb }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,32px);margin:14px 0 4px;color:#17130f;letter-spacing:-.02em;">{{ t.b_inv }}</h1>
+          <div style="font-size:14px;color:#7c756c;margin-bottom:18px;">{{ t.inv_sub }}</div>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;">
+            <div style="display:flex;padding:11px 18px;background:#faf7f2;border-bottom:2px solid #17130f;font:600 10.5px 'IBM Plex Mono';letter-spacing:.1em;text-transform:uppercase;color:#7c756c;"><span style="flex:1;">{{ t.article }}</span><span style="width:64px;text-align:center;">MIN</span><span style="width:64px;text-align:center;">MAX</span><span style="width:70px;text-align:center;">{{ t.stock }}</span><span style="width:110px;"></span></div>
+            <sc-for list="{{ inventory }}" as="i" hint-placeholder-count="8">
+            <div style="display:flex;align-items:center;padding:12px 18px;border-bottom:1px solid #f0eae0;">
+              <span style="flex:1;"><span style="display:block;font-weight:600;color:#17130f;font-size:14px;">{{ i.name }}</span><span style="{{ i.statusStyle }}">{{ i.statusLabel }}</span></span>
+              <span style="width:64px;text-align:center;font:500 13px 'IBM Plex Mono';color:#a49c90;">{{ i.min }}</span>
+              <span style="width:64px;text-align:center;font:500 13px 'IBM Plex Mono';color:#a49c90;">{{ i.max }}</span>
+              <span style="width:70px;text-align:center;font:700 15px 'IBM Plex Mono';color:#17130f;">{{ i.current }}</span>
+              <span style="width:110px;text-align:right;"><button onClick="{{ i.order }}" style="{{ i.btnStyle }}">{{ i.btnLabel }}</button></span>
+            </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ BETRIEB: TEMPERATUR ============ -->
+        <sc-if value="{{ bTemp }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:680px;">
+          <button onClick="{{ backBetrieb }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,32px);margin:14px 0 4px;color:#17130f;letter-spacing:-.02em;">{{ t.b_temp }}</h1>
+          <div style="font-size:14px;color:#7c756c;margin-bottom:18px;">{{ t.temp_sub }}</div>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+            <div style="flex:1;min-width:150px;"><label style="{{ labelStyle }}">{{ t.temp_station }}</label><select value="{{ tempStation }}" onChange="{{ onTempStation }}" style="{{ inputStyle }}"><option value="Kühlschrank">Kühlschrank (2–7°C)</option><option value="Bain Marie">Bain Marie (&gt;63°C)</option><option value="Tiefkühler">Tiefkühler (&lt;-18°C)</option><option value="Salattheke">Salattheke (2–7°C)</option></select></div>
+            <div style="width:120px;"><label style="{{ labelStyle }}">{{ t.temp_value }} °C</label><input type="number" value="{{ tempValue }}" onInput="{{ onTempValue }}" placeholder="0" style="{{ inputStyle }}"></div>
+            <button onClick="{{ submitTemp }}" style="{{ primaryBtnStyle }}">{{ t.temp_log }}</button>
+          </div>
+          <sc-if value="{{ hasTemp }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;">
+            <sc-for list="{{ tempLog }}" as="e" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid #f0eae0;"><span style="{{ e.dotStyle }}"></span><span style="flex:1;font-weight:600;color:#17130f;">{{ e.station }}</span><span style="font:700 15px 'IBM Plex Mono';color:{{ e.color }};">{{ e.value }}°C</span><span style="{{ e.tagStyle }}">{{ e.tag }}</span><span style="font:500 11px 'IBM Plex Mono';color:#a49c90;width:52px;text-align:right;">{{ e.time }}</span></div></sc-for>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- ============ BETRIEB: MELDUNGEN ============ -->
+        <sc-if value="{{ bReport }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:600px;">
+          <button onClick="{{ backBetrieb }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,32px);margin:14px 0 4px;color:#17130f;letter-spacing:-.02em;">{{ t.b_report }}</h1>
+          <div style="font-size:14px;color:#7c756c;margin-bottom:18px;">{{ t.report_sub }}</div>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;padding:20px;display:flex;gap:10px;">
+            <textarea value="{{ reportText }}" onInput="{{ onReport }}" placeholder="{{ t.report_ph }}" style="{{ textareaStyle }};margin:0;flex:1;min-height:52px;"></textarea>
+            <button onClick="{{ submitReport }}" style="{{ primaryBtnStyle }};margin:0;align-self:stretch;">{{ t.send }}</button>
+          </div>
+          <div style="margin-top:18px;">
+            <sc-for list="{{ meldungen }}" as="m" hint-placeholder-count="3"><div style="background:#fff;border:1px solid #e4ded4;border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;gap:12px;"><span style="{{ m.dotStyle }}"></span><div style="flex:1;"><div style="color:#2a2620;">{{ m.text }}</div><div style="font:500 11px 'IBM Plex Mono';color:#a49c90;margin-top:3px;">{{ m.meta }}</div></div></div></sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ BETRIEB: ONBOARDING ============ -->
+        <sc-if value="{{ bOnboard }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:720px;">
+          <button onClick="{{ backBetrieb }}" style="{{ backBtnStyle }}">← {{ t.back }}</button>
+          <h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,32px);margin:14px 0 4px;color:#17130f;letter-spacing:-.02em;">{{ t.b_onboard }}</h1>
+          <div style="height:9px;background:#e9e2d6;border-radius:6px;overflow:hidden;margin:14px 0 6px;"><div style="{{ onbBarStyle }}"></div></div>
+          <div style="font:600 12px 'IBM Plex Mono';color:#7c756c;margin-bottom:18px;">{{ onbDone }} / {{ onbTotal }} {{ t.modules_done }}</div>
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;">
+            <sc-for list="{{ modules }}" as="m" hint-placeholder-count="6">
+            <button onClick="{{ m.toggle }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:15px 18px;background:transparent;border:none;border-bottom:1px solid #f0eae0;cursor:pointer;text-align:left;" style-hover="background:#faf7f2;">
+              <span style="{{ m.boxStyle }}"><sc-if value="{{ m.checked }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#fff" stroke-width="3.2"><polyline points="4,12.5 9.5,18 20,5.5"/></svg></sc-if></span>
+              <span style="flex:1;"><span style="{{ m.textStyle }}">{{ m.title }}</span><span style="display:block;font-size:12.5px;color:#a49c90;margin-top:2px;">{{ m.day }}</span></span>
+            </button>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ MEHR (settings + management) ============ -->
+        <sc-if value="{{ isMehr }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:mmfade .3s ease;max-width:900px;">
+          <div style="margin-bottom:18px;"><div style="font:600 12px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#b8912e;">{{ t.nav_mehr }}</div><h1 style="font-family:'Archivo';font-weight:800;font-size:clamp(24px,4vw,34px);margin:6px 0 0;color:#17130f;letter-spacing:-.02em;">{{ t.mehr_h }}</h1></div>
+
+          <!-- Management dashboard (gated) -->
+          <sc-if value="{{ canMgmt }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#17130f;color:#f6f3ee;border-radius:18px;padding:24px;margin-bottom:20px;">
+            <div style="font:600 11px 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#f5a11f;margin-bottom:16px;">{{ t.mgmt_dash }} · Idar-Oberstein</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;">
+              <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4"><div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:15px 16px;"><div style="font:600 10px 'IBM Plex Mono';letter-spacing:.1em;text-transform:uppercase;color:rgba(246,243,238,.5);">{{ k.label }}</div><div style="font-family:'Archivo';font-weight:900;font-size:26px;margin-top:5px;">{{ k.value }}</div><div style="font-size:12px;color:#7fd39b;font-weight:600;margin-top:2px;">{{ k.delta }}</div></div></sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;">
+              <div><div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:rgba(246,243,238,.5);margin-bottom:10px;">{{ t.standorte }}</div>
+                <sc-for list="{{ standorte }}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);"><span style="{{ s.dotStyle }}"></span><span style="flex:1;font-size:14px;">{{ s.name }}</span><span style="font:500 11px 'IBM Plex Mono';color:rgba(246,243,238,.5);">{{ s.status }}</span></div></sc-for>
+              </div>
+              <div><div style="font:600 10px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:rgba(246,243,238,.5);margin-bottom:10px;">{{ t.team }}</div>
+                <sc-for list="{{ team }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);"><span style="width:26px;height:26px;border-radius:50%;background:{{ p.color }};color:#17130f;display:flex;align-items:center;justify-content:center;font:800 11px 'Archivo';">{{ p.initial }}</span><span style="flex:1;font-size:14px;">{{ p.name }}</span><span style="font:500 11px 'IBM Plex Mono';color:rgba(246,243,238,.5);">{{ p.role }}</span></div></sc-for>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+          <sc-if value="{{ mgmtLocked }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#f7f0e2;border:1px dashed #e5d6b3;border-radius:16px;padding:22px;margin-bottom:20px;display:flex;gap:14px;align-items:center;"><span style="font-size:24px;">🔒</span><div><div style="font-family:'Archivo';font-weight:800;font-size:17px;color:#8a6a15;">{{ t.mgmt_dash }}</div><div style="font-size:13.5px;color:#8a7f66;margin-top:3px;">{{ t.mgmt_locked }}</div></div></div>
+          </sc-if>
+
+          <!-- Settings -->
+          <div style="background:#fff;border:1px solid #e4ded4;border-radius:16px;overflow:hidden;">
+            <div style="padding:16px 20px;border-bottom:1px solid #f0eae0;"><div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:10px;">{{ t.roleswitch }}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;"><button onClick="{{ setRoleMa }}" style="{{ rs_ma }}">{{ t.role_ma }}</button><button onClick="{{ setRoleSl }}" style="{{ rs_sl }}">{{ t.role_sl }}</button><button onClick="{{ setRoleMg }}" style="{{ rs_mg }}">{{ t.role_mgmt }}</button></div>
+            </div>
+            <div style="padding:16px 20px;border-bottom:1px solid #f0eae0;"><div style="font:600 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:#7c756c;margin-bottom:10px;">{{ t.language }}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;"><button onClick="{{ setLangDe }}" style="{{ rl_de }}">Deutsch</button><button onClick="{{ setLangEn }}" style="{{ rl_en }}">English</button><button onClick="{{ setLangTr }}" style="{{ rl_tr }}">Türkçe</button><button onClick="{{ setLangAr }}" style="{{ rl_ar }}">العربية</button></div>
+              <div style="font-size:12px;color:#a49c90;margin-top:10px;line-height:1.4;">{{ t.i18n_note }}</div>
+            </div>
+            <div style="padding:16px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;"><div><div style="font-weight:600;color:#17130f;">MeatyMunch MMOS · v1.0</div><div style="font-size:12.5px;color:#a49c90;">{{ t.confidential }}</div></div>
+              <button onClick="{{ logout }}" style="background:#fbe9d6;border:1px solid #f0c79a;border-radius:10px;padding:10px 20px;font:700 13px Inter;color:#b1470f;cursor:pointer;" style-hover="background:#f7ddc0;">{{ t.logout }}</button>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <sc-if value="{{ showBottomNav }}" hint-placeholder-val="{{ true }}">
+  <nav style="flex:none;background:#17130f;border-top:1px solid rgba(255,255,255,.08);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:20;">
+    <button onClick="{{ goStart }}" style="{{ nb_start }}"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>{{ t.nav_start }}</button>
+    <button onClick="{{ goCheck }}" style="{{ nb_check }}"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>{{ t.nav_check }}</button>
+    <button onClick="{{ goWissen }}" style="{{ nb_wissen }}"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>{{ t.nav_wissen }}</button>
+    <button onClick="{{ goBetrieb }}" style="{{ nb_betrieb }}"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ t.nav_betrieb }}</button>
+    <button onClick="{{ goMehr }}" style="{{ nb_mehr }}"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/><circle cx="5" cy="12" r="1.6"/></svg>{{ t.nav_mehr }}</button>
+  </nav>
+  </sc-if>
+
+  <!-- TOAST -->
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#17130f;color:#f6f3ee;padding:13px 22px;border-radius:30px;font:600 14px Inter;box-shadow:0 12px 34px rgba(0,0,0,.4);z-index:60;display:flex;align-items:center;gap:9px;animation:mmtoast .3s ease;border:1px solid rgba(240,127,19,.4);"><span style="color:#f5a11f;font-size:16px;">✓</span>{{ toast }}</div>
+  </sc-if>
+
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:800}}">
+class Component extends DCLogic {
+  state = {
+    loggedIn:false, role:'ma', lang:'de', tab:'start', homeVar:0,
+    wsub:'sop', open:null, bsub:null, checks:{}, ordered:{}, mods:{},
+    vw:(typeof window!=='undefined'?window.innerWidth:1200),
+    query:'', tempStation:'Kühlschrank', tempValue:'', tempLog:[],
+    sickFrom:'', sickTo:'', sickReason:'', sickList:[],
+    reportText:'', extraMeld:[], toast:null,
+  };
+
+  componentDidMount(){
+    this._onResize=()=>this.setState({vw:window.innerWidth});
+    window.addEventListener('resize',this._onResize);
+  }
+  componentWillUnmount(){ window.removeEventListener('resize',this._onResize); if(this._tt)clearTimeout(this._tt); }
+
+  showToast(msg){ this.setState({toast:msg}); if(this._tt)clearTimeout(this._tt); this._tt=setTimeout(()=>this.setState({toast:null}),2600); }
+
+  // ---------- DATA ----------
+  T(){
+    const de={
+      tagline:'Smash. Sizzle. Strasse.',
+      login_sub:'Dein Betriebssystem für die Schicht. Checklisten, SOPs, Rezepte und alles, was du brauchst — an einem Ort.',
+      login_choose:'Rolle wählen', login_pinhint:'Demo · kein Passwort nötig',
+      role_ma:'Mitarbeiter', role_ma_d:'Stationen, Checklisten, SOPs & Rezepte.',
+      role_sl:'Schichtleiter', role_sl_d:'Schicht führen, Team & Meldungen im Blick.',
+      role_mgmt:'Management', role_mgmt_d:'Kennzahlen, Standorte & Team steuern.',
+      nav_start:'Start', nav_check:'Checklisten', nav_wissen:'Wissen', nav_betrieb:'Betrieb', nav_mehr:'Mehr',
+      home_sub:'Bereit für die Schicht? Das steht heute an.',
+      hv_focus:'Fokus', hv_cards:'Karten', hv_dash:'Dashboard',
+      today:'Heute', priority:'Priorität heute', steps_done:'Schritte erledigt', continue:'Weiter',
+      quickactions:'Schnellzugriff', myshift:'Meine Schicht', badges:'Abzeichen', level:'Level', streak:'Serie',
+      qa_sop:'SOP nachschlagen', qa_recipe:'Rezept', qa_temp:'Temperatur', qa_sick:'Krankmeldung', qa_report:'Melden',
+      check_h:'Checklisten', check_sub:'Hake ab, was erledigt ist. Dein Fortschritt wird gespeichert.',
+      check_alldone:'Alles erledigt — saubere Arbeit!', reset:'Zurücksetzen', weekly:'Wöchentlich',
+      cl_oeffnen:'Öffnungsablauf',
+      wissen_h:'Nachschlagen & Lernen', search_ph:'Suchen: SOP, Kapitel, Rezept …',
+      tab_sop:'SOP-Karten', tab_hb:'Handbuch', tab_rez:'Rezepte',
+      more_sop:'Weitere SOPs', in_prep:'in Vorbereitung', key_points:'Kernpunkte', important:'Wichtig',
+      readtime:'Lesezeit', fulltext_note:'Vollständiger Kapiteltext im Handbuch (Band 1).',
+      buildcard:'Build Card', layers:'Schichten', build_order:'Bau-Reihenfolge', tap_steps:'Tippe die Schritte zum Abhaken', back:'Zurück',
+      betrieb_h:'Betrieb & Organisation',
+      b_shift:'Schichtplan', b_sick:'Krankmeldung', b_inv:'Inventur & Bestellung', b_temp:'Temperatur-Doku', b_report:'Meldungen & Aufgaben', b_onboard:'Onboarding & Schulung',
+      opening_hours:'Öffnungszeiten', sick_sub:'Melde deine Abwesenheit rechtzeitig beim Schichtleiter.',
+      sick_from:'Von', sick_to:'Bis', sick_reason:'Grund (optional)', sick_ph:'z. B. Erkältung, Attest folgt', submit:'Absenden', sick_list:'Deine Meldungen',
+      inv_sub:'MIN/MAX-System. Unter MIN → nachbestellen.', article:'Artikel', stock:'Bestand', order:'Bestellen', ordered:'Bestellt',
+      temp_sub:'Temperaturen täglich prüfen & dokumentieren.', temp_station:'Station', temp_value:'Wert', temp_log:'Eintragen',
+      report_sub:'Probleme & Aufgaben an die Schichtleitung.', report_ph:'Was ist zu melden?', send:'Senden',
+      modules_done:'Module abgeschlossen',
+      mehr_h:'Mehr & Einstellungen', mgmt_dash:'Management-Dashboard', mgmt_locked:'Nur für Management & Geschäftsführung sichtbar. Wechsle die Rolle zum Testen.',
+      standorte:'Standorte', team:'Team', roleswitch:'Rolle wechseln (Demo)', language:'Sprache',
+      i18n_note:'Bedienoberfläche mehrsprachig. Handbuch-Inhalte bleiben auf Deutsch (Originaldokument).',
+      confidential:'Vertraulich · Nur für Mitarbeiter', logout:'Abmelden',
+      checklist_status:'Checklisten-Status', open_reports:'Offene Meldungen',
+    };
+    const en={
+      login_sub:'Your operating system for the shift. Checklists, SOPs, recipes and everything you need — in one place.',
+      login_choose:'Choose your role', login_pinhint:'Demo · no password needed',
+      role_ma:'Team Member', role_ma_d:'Stations, checklists, SOPs & recipes.',
+      role_sl:'Shift Lead', role_sl_d:'Run the shift, team & reports at a glance.',
+      role_mgmt:'Management', role_mgmt_d:'Steer metrics, locations & team.',
+      nav_start:'Home', nav_check:'Checklists', nav_wissen:'Knowledge', nav_betrieb:'Operations', nav_mehr:'More',
+      home_sub:'Ready for the shift? Here’s what’s up today.',
+      hv_focus:'Focus', hv_cards:'Cards', hv_dash:'Dashboard',
+      today:'Today', priority:'Today’s priority', steps_done:'steps done', continue:'Continue',
+      quickactions:'Quick access', myshift:'My shift', badges:'Badges', level:'Level', streak:'Streak',
+      qa_sop:'Look up SOP', qa_recipe:'Recipe', qa_temp:'Temperature', qa_sick:'Sick note', qa_report:'Report',
+      check_h:'Checklists', check_sub:'Tick off what’s done. Your progress is saved.',
+      check_alldone:'All done — clean work!', reset:'Reset', weekly:'Weekly', cl_oeffnen:'Opening routine',
+      wissen_h:'Look up & learn', search_ph:'Search: SOP, chapter, recipe …',
+      tab_sop:'SOP cards', tab_hb:'Manual', tab_rez:'Recipes',
+      more_sop:'More SOPs', in_prep:'in preparation', key_points:'Key points', important:'Important',
+      readtime:'Read time', fulltext_note:'Full chapter text in the manual (Vol. 1).',
+      buildcard:'Build card', layers:'layers', build_order:'Build order', tap_steps:'Tap the steps to check off', back:'Back',
+      betrieb_h:'Operations & organisation',
+      b_shift:'Shift plan', b_sick:'Sick note', b_inv:'Inventory & ordering', b_temp:'Temperature log', b_report:'Reports & tasks', b_onboard:'Onboarding & training',
+      opening_hours:'Opening hours', sick_sub:'Report your absence to the shift lead in time.',
+      sick_from:'From', sick_to:'To', sick_reason:'Reason (optional)', sick_ph:'e.g. cold, note to follow', submit:'Submit', sick_list:'Your notes',
+      inv_sub:'MIN/MAX system. Below MIN → reorder.', article:'Article', stock:'Stock', order:'Order', ordered:'Ordered',
+      temp_sub:'Check & log temperatures daily.', temp_station:'Station', temp_value:'Value', temp_log:'Log',
+      report_sub:'Report problems & tasks to the shift lead.', report_ph:'What to report?', send:'Send',
+      modules_done:'modules completed',
+      mehr_h:'More & settings', mgmt_dash:'Management dashboard', mgmt_locked:'Visible to management only. Switch role to test.',
+      standorte:'Locations', team:'Team', roleswitch:'Switch role (demo)', language:'Language',
+      i18n_note:'Interface is multilingual. Manual content stays in German (source document).',
+      confidential:'Confidential · Staff only', logout:'Log out',
+      checklist_status:'Checklist status', open_reports:'Open reports',
+    };
+    const tr={
+      login_sub:'Vardiyan için işletim sistemin. Kontrol listeleri, SOP’lar, tarifler — hepsi tek yerde.',
+      login_choose:'Rolünü seç', login_pinhint:'Demo · şifre gerekmez',
+      role_ma:'Çalışan', role_ma_d:'İstasyonlar, listeler, SOP ve tarifler.',
+      role_sl:'Vardiya Amiri', role_sl_d:'Vardiyayı yönet, ekip ve bildirimler.',
+      role_mgmt:'Yönetim', role_mgmt_d:'Rakamlar, şubeler ve ekip.',
+      nav_start:'Ana', nav_check:'Listeler', nav_wissen:'Bilgi', nav_betrieb:'İşletme', nav_mehr:'Daha',
+      home_sub:'Vardiyaya hazır mısın? Bugün olanlar.',
+      hv_focus:'Odak', hv_cards:'Kartlar', hv_dash:'Panel',
+      today:'Bugün', priority:'Bugünün önceliği', steps_done:'adım tamam', continue:'Devam',
+      quickactions:'Hızlı erişim', myshift:'Vardiyam', badges:'Rozetler', level:'Seviye', streak:'Seri',
+      qa_sop:'SOP bak', qa_recipe:'Tarif', qa_temp:'Sıcaklık', qa_sick:'Hastalık', qa_report:'Bildir',
+      check_h:'Kontrol listeleri', check_sub:'Biteni işaretle. İlerlemen kaydedilir.',
+      check_alldone:'Hepsi tamam — temiz iş!', reset:'Sıfırla', weekly:'Haftalık', cl_oeffnen:'Açılış rutini',
+      wissen_h:'Bak & öğren', search_ph:'Ara: SOP, bölüm, tarif …',
+      tab_sop:'SOP kartları', tab_hb:'El kitabı', tab_rez:'Tarifler',
+      more_sop:'Diğer SOP’lar', in_prep:'hazırlanıyor', key_points:'Ana noktalar', important:'Önemli',
+      readtime:'Okuma', fulltext_note:'Tam bölüm metni el kitabında (Cilt 1).',
+      buildcard:'Yapım kartı', layers:'katman', build_order:'Yapım sırası', tap_steps:'İşaretlemek için dokun', back:'Geri',
+      betrieb_h:'İşletme & organizasyon',
+      b_shift:'Vardiya planı', b_sick:'Hastalık bildirimi', b_inv:'Envanter & sipariş', b_temp:'Sıcaklık kaydı', b_report:'Bildirim & görev', b_onboard:'Oryantasyon & eğitim',
+      opening_hours:'Çalışma saatleri', sick_sub:'Yokluğunu amirine zamanında bildir.',
+      sick_from:'Başlangıç', sick_to:'Bitiş', sick_reason:'Neden (isteğe bağlı)', sick_ph:'örn. soğuk algınlığı', submit:'Gönder', sick_list:'Bildirimlerin',
+      inv_sub:'MIN/MAX sistemi. MIN altı → sipariş.', article:'Ürün', stock:'Stok', order:'Sipariş', ordered:'Sipariş verildi',
+      temp_sub:'Sıcaklıkları günlük ölç & kaydet.', temp_station:'İstasyon', temp_value:'Değer', temp_log:'Kaydet',
+      report_sub:'Sorun & görevleri amire bildir.', report_ph:'Ne bildirilecek?', send:'Gönder',
+      modules_done:'modül tamamlandı',
+      mehr_h:'Daha & ayarlar', mgmt_dash:'Yönetim paneli', mgmt_locked:'Sadece yönetim görebilir. Test için rol değiştir.',
+      standorte:'Şubeler', team:'Ekip', roleswitch:'Rol değiştir (demo)', language:'Dil',
+      i18n_note:'Arayüz çok dilli. El kitabı içeriği Almanca kalır (kaynak belge).',
+      confidential:'Gizli · Sadece personel', logout:'Çıkış',
+      checklist_status:'Liste durumu', open_reports:'Açık bildirimler',
+    };
+    const ar={
+      login_sub:'نظام تشغيلك للوردية. قوائم المهام وإجراءات العمل والوصفات — في مكان واحد.',
+      login_choose:'اختر دورك', login_pinhint:'تجريبي · لا حاجة لكلمة مرور',
+      role_ma:'موظف', role_ma_d:'المحطات والقوائم والإجراءات والوصفات.',
+      role_sl:'مسؤول الوردية', role_sl_d:'إدارة الوردية والفريق والبلاغات.',
+      role_mgmt:'الإدارة', role_mgmt_d:'المؤشرات والفروع والفريق.',
+      nav_start:'الرئيسية', nav_check:'القوائم', nav_wissen:'المعرفة', nav_betrieb:'التشغيل', nav_mehr:'المزيد',
+      home_sub:'جاهز للوردية؟ إليك مهام اليوم.',
+      hv_focus:'تركيز', hv_cards:'بطاقات', hv_dash:'لوحة',
+      today:'اليوم', priority:'أولوية اليوم', steps_done:'خطوة مكتملة', continue:'متابعة',
+      quickactions:'وصول سريع', myshift:'ورديتي', badges:'الأوسمة', level:'المستوى', streak:'التتابع',
+      qa_sop:'إجراء العمل', qa_recipe:'وصفة', qa_temp:'الحرارة', qa_sick:'إجازة مرضية', qa_report:'إبلاغ',
+      check_h:'قوائم المهام', check_sub:'حدّد المنجز. يتم حفظ تقدمك.',
+      check_alldone:'اكتمل كل شيء — عمل رائع!', reset:'إعادة', weekly:'أسبوعي', cl_oeffnen:'روتين الافتتاح',
+      wissen_h:'ابحث وتعلّم', search_ph:'بحث: إجراء، فصل، وصفة …',
+      tab_sop:'بطاقات الإجراءات', tab_hb:'الدليل', tab_rez:'الوصفات',
+      more_sop:'إجراءات أخرى', in_prep:'قيد الإعداد', key_points:'النقاط الأساسية', important:'مهم',
+      readtime:'مدة القراءة', fulltext_note:'النص الكامل في الدليل (المجلد 1).',
+      buildcard:'بطاقة التركيب', layers:'طبقات', build_order:'ترتيب التركيب', tap_steps:'انقر الخطوات للتحديد', back:'رجوع',
+      betrieb_h:'التشغيل والتنظيم',
+      b_shift:'جدول الورديات', b_sick:'إجازة مرضية', b_inv:'الجرد والطلب', b_temp:'سجل الحرارة', b_report:'البلاغات والمهام', b_onboard:'التأهيل والتدريب',
+      opening_hours:'ساعات العمل', sick_sub:'أبلغ مسؤول الوردية بغيابك في الوقت المناسب.',
+      sick_from:'من', sick_to:'إلى', sick_reason:'السبب (اختياري)', sick_ph:'مثال: زكام', submit:'إرسال', sick_list:'بلاغاتك',
+      inv_sub:'نظام الحد الأدنى/الأقصى. تحت الحد → اطلب.', article:'الصنف', stock:'المخزون', order:'اطلب', ordered:'تم الطلب',
+      temp_sub:'قِس الحرارة وسجّلها يوميًا.', temp_station:'المحطة', temp_value:'القيمة', temp_log:'تسجيل',
+      report_sub:'أبلغ المسؤول بالمشاكل والمهام.', report_ph:'ما الذي تريد الإبلاغ عنه؟', send:'إرسال',
+      modules_done:'وحدة مكتملة',
+      mehr_h:'المزيد والإعدادات', mgmt_dash:'لوحة الإدارة', mgmt_locked:'مرئية للإدارة فقط. غيّر الدور للتجربة.',
+      standorte:'الفروع', team:'الفريق', roleswitch:'تغيير الدور (تجريبي)', language:'اللغة',
+      i18n_note:'الواجهة متعددة اللغات. محتوى الدليل يبقى بالألمانية (المستند الأصلي).',
+      confidential:'سري · للموظفين فقط', logout:'تسجيل الخروج',
+      checklist_status:'حالة القوائم', open_reports:'بلاغات مفتوحة',
+    };
+    const merged={de, en:{...de,...en}, tr:{...de,...tr}, ar:{...de,...ar}};
+    return merged[this.state.lang]||de;
+  }
+
+  checklists(){
+    return [
+      {id:'oeffnen', title:this.state.lang==='de'?'Öffnungsablauf':this.T().cl_oeffnen, accent:'#f07f13', desc:'Vor dem ersten Gast: Stationen aufbauen und einsatzbereit machen.', items:[
+        {id:'a', text:'Hände waschen & Schürze anlegen'},
+        {id:'b', text:'Stationen aufbauen — jeder Platz identisch (Sauce, Gewürze, Zange, Handschuhe)'},
+        {id:'c', text:'Salattheke auffüllen & Frische prüfen (2–7 °C)'},
+        {id:'d', text:'Bain Marie einschalten, Currysoße einfüllen & aufwärmen'},
+        {id:'e', text:'Fritteuse & Grill vorheizen'},
+        {id:'f', text:'Kasse hochfahren & Bonrolle prüfen'},
+        {id:'g', text:'Arbeitsflächen kontrollieren — sauber & frei'},
+        {id:'h', text:'Bereit-Check: alles aufgefüllt, sauber, vorbereitet'},
+      ]},
+      {id:'schliessen', title:'Schließablauf', accent:'#7C3AED', desc:'Nach Betriebsende: reinigen, sichern, sauber übergeben.', items:[
+        {id:'a', text:'Grill, Fritteuse, Herd ausschalten & reinigen'},
+        {id:'b', text:'Bain Marie leeren — keine Speisen über Nacht'},
+        {id:'c', text:'Salattheke abwischen & abdecken'},
+        {id:'d', text:'Reste korrekt lagern (FIFO) oder entsorgen'},
+        {id:'e', text:'Müll rausbringen'},
+        {id:'f', text:'Böden wischen'},
+        {id:'g', text:'Kasse abrechnen & abschließen'},
+        {id:'h', text:'Licht aus, abschließen, Übergabe dokumentieren'},
+      ]},
+      {id:'salattheke', title:'Reinigung Salattheke', accent:'#2e9e57', desc:'Täglich jeden Abend — SOP 9.', weekly:'Samstags: alle Behälter entnehmen, mit warmem Wasser & Spülmittel reinigen, abtrocknen, Theke innen & außen gründlich reinigen.', items:[
+        {id:'a', text:'Salattheke mit sauberem Lappen gründlich abwischen'},
+        {id:'b', text:'Alle Flächen frei von Rückständen'},
+        {id:'c', text:'Verfallsdaten der Saucen & Marinaden prüfen'},
+        {id:'d', text:'Kühlkette kontrollieren: 2–7 °C'},
+        {id:'e', text:'Arbeitsbereich sauber & ordentlich hinterlassen'},
+      ]},
+      {id:'bainmarie', title:'Reinigung Bain Marie', accent:'#e8631a', desc:'Currysoße-Behälter Di/Do/Sa — SOP 10.', weekly:'Erster Mittwoch im Monat: gesamte Bain Marie gründlich reinigen und Wasser komplett wechseln.', items:[
+        {id:'a', text:'Speisen umrühren & Temperatur prüfen'},
+        {id:'b', text:'Currysoße-Behälter reinigen (Di / Do / Sa)'},
+        {id:'c', text:'Behälter abdecken, wenn nicht in Gebrauch'},
+        {id:'d', text:'Wasser frisch einfüllen'},
+        {id:'e', text:'Sauberkeit & Temperatur dokumentieren'},
+      ]},
+      {id:'station', title:'Stations-Qualitätscheck', accent:'#b8912e', desc:'Vor der Ausgabe — Qualität sichern.', items:[
+        {id:'a', text:'Optik: Aufbau exakt nach Build Card'},
+        {id:'b', text:'Temperatur: Patty durch, Soßen warm'},
+        {id:'c', text:'Portionsgrößen korrekt (80 g Bun · 110 g Patty)'},
+        {id:'d', text:'Verpackung vollständig'},
+        {id:'e', text:'Arbeitsplatz sauber (3-Schritte-Regel)'},
+        {id:'f', text:'Handschuhe & Handhygiene ok'},
+      ]},
+    ];
+  }
+
+  sops(){ return [
+    {id:'salattheke', no:'9', title:'Salattheke', img:'assets/sop-salattheke.jpeg', summary:'Inhalt, Frische & tägliche/wöchentliche Reinigung.', points:['Inhalt: Gurken, Tomaten, Jalapeños, Eisbergsalat, Zwiebeln, Chicken- & Haupt-Marinade','Täglich abends: Theke abwischen, Flächen frei von Rückständen','Wöchentlich (Sa): alle Behälter entnehmen & gründlich reinigen','Kühlkette 2–7 °C einhalten'], important:'Nur frische, einwandfreie Produkte verwenden. Verfallsdaten der Saucen & Marinaden regelmäßig kontrollieren.'},
+    {id:'bainmarie', no:'10', title:'Bain Marie', img:'assets/sop-bainmarie.jpeg', summary:'Currysoße & Fertigspeisen konstant warm halten.', points:['Vorderer Behälter: Currysoße, jederzeit warm halten','Zwei hintere Behälter: Fertigspeisen warmhalten','Reinigung Currysoße-Behälter: Di / Do / Sa','Gesamte Bain Marie: erster Mittwoch im Monat, Wasser wechseln'], important:'Speisen regelmäßig umrühren & Temperatur prüfen. Keine Speisen über Nacht stehen lassen. Behälter abdecken, wenn nicht in Gebrauch.'},
+    {id:'kasse', no:'11', title:'Kasse', img:'assets/sop-kasse.jpeg', summary:'Kassenvorgang, Sätze & Geldhandling.', points:['Kunde kommt: nicht am Handy sein, immer aufstehen','Bestellung vollständig aufnehmen, Extras nachfragen, wiederholen','Bestellung kontrollieren & an Küche weitergeben','Kassenschublade geschlossen halten, nur autorisierte MA'], important:'Immer freundlich & professionell. Keine Bestellung ohne Bezahlung herausgeben. Kasse nie unbeaufsichtigt offen lassen.'},
+  ];}
+
+  recipes(){ return [
+    {id:'classic', name:'Classic Smash', img:'assets/recipe-classicsmash.jpeg', bun:'Bun 80 g', patty:'Patty 110 g', steps:[
+      'Bun (Boden)','Ketchup','3× Gurkenscheiben','Eisbergsalat','110 g Smash Patty','Cheddar Käse (1 Scheibe)','Karamellisierte Zwiebeln','Tomate (1 Scheibe)','Mayo','Bun (Deckel)']},
+    {id:'chilli', name:'Chilli Milli', img:'assets/recipe-chillimilli.jpeg', bun:'Bun 80 g', patty:'Patty 110 g', steps:[
+      'Bun (Boden)','Ketchup','3× Gurkenscheiben','Eisbergsalat','110 g Smash Patty','Cheddar Käse (1 Scheibe)','Karamellisierte Zwiebeln','Tomate (1 Scheibe)','Jalapeños','Chili-Cheese-Soße','Bun (Deckel)']},
+  ];}
+
+  chapters(){ return [
+    {no:'01', title:'Erscheinungsbild & Auftreten', desc:'Kleidung, Hygiene, Körpersprache, Handyregel', read:'ca. 12 Min', status:'done', lead:'Der erste Eindruck entscheidet. Wie wir aussehen und auftreten, ist Teil des Produkts.', points:['Saubere, vollständige Arbeitskleidung & Schürze','Persönliche Hygiene: Hände, Nägel, Haare','Freundliche, aufrechte Körpersprache','Handy nicht am Arbeitsplatz — nur in der Pause']},
+    {no:'02', title:'Organisation, Rollen & Verantwortlichkeiten', desc:'Organigramm, Rollen, Eskalationsweg', read:'ca. 14 Min', status:'done', lead:'Jeder weiß, was seine Aufgabe ist — und wer worüber entscheidet.', points:['Jede Aufgabe hat genau einen Verantwortlichen','Struktur: Inhaber → Schichtleiter → Team','Eskalation: selbst lösen → Schichtleiter → Geschäftsführung','Bei Gefahr: kein Stufenweg, sofort handeln & melden']},
+    {no:'03', title:'Hygiene & Lebensmittelsicherheit', desc:'Händehygiene, Temperaturen, FIFO, HACCP, Halal', read:'ca. 16 Min', status:'done', lead:'Sauberkeit ist kein Zustand, sondern ständige Arbeit. Halal ohne Kompromisse.', points:['Händehygiene: regelmäßig & nach jedem Wechsel','Kühlkette 2–7 °C, Bain Marie >63 °C','FIFO: First In, First Out','Halal-Trennung strikt einhalten']},
+    {no:'04', title:'Öffnungs- & Schließablauf', desc:'Tagesroutine, Stationen, Schichtübergabe', read:'ca. 13 Min', status:'done', lead:'Der Tag beginnt und endet nach festem Ablauf — jede Schicht gleich.', points:['Öffnen: Stationen aufbauen, auffüllen, vorheizen','Schließen: reinigen, sichern, dokumentieren','Saubere Schichtübergabe','Checklisten nutzen (siehe Tab Checklisten)']},
+    {no:'05', title:'Kommunikation, Verhalten & Premium-Service', desc:'Gastkontakt, Reklamationen, Servicehaltung', read:'ca. 12 Min', status:'plan', lead:'Wir verkaufen ein Erlebnis. Der Ton macht die Marke.', points:['Freundlich begrüßen & verabschieden','Reklamationen ruhig & lösungsorientiert','Nie vor dem Gast diskutieren','Premium-Haltung auch unter Stress']},
+    {no:'06', title:'Stationen & Arbeitsabläufe', desc:'Übersicht & Verweis auf SOP-Karten', read:'ca. 10 Min', status:'plan', lead:'Jede Station hat klare Abläufe. Details auf den SOP-Karten.', points:['Grill, Chicken, Fritteuse, Burger Build','Herd, Verpackung, Spülstation','Kurze Wege: ideal 3 Schritte','SOP-Karten im Tab Wissen']},
+    {no:'07', title:'Qualitätskontrolle & Standards', desc:'Prüfkriterien, Optik, Temperatur, Verpackung', read:'ca. 11 Min', status:'plan', lead:'Qualität vor Geschwindigkeit — jedes Produkt wird geprüft.', points:['Optik nach Build Card','Temperatur & Frische','Portionsgrößen einhalten','Verpackung vollständig & sauber']},
+    {no:'08', title:'Bestellung, Lieferanten & Inventur', desc:'MIN/MAX-System, Bestellkalender, Lager', read:'ca. 12 Min', status:'plan', lead:'Nie zu viel, nie zu wenig. Das MIN/MAX-System steuert den Einkauf.', points:['Bestand gegen MIN/MAX prüfen','Unter MIN → nachbestellen','FIFO im Lager','Inventur im Tab Betrieb']},
+    {no:'09', title:'Arbeitszeiten, Pausen & Krankmeldung', desc:'Schichten, Pausenregeln, Abwesenheit', read:'ca. 9 Min', status:'plan', lead:'Einsatzbereit statt nur anwesend. Klare Regeln für Zeit & Abwesenheit.', points:['Öffnungszeiten Mo–Sa 10:30–20:00','Schichtbeginn = einsatzbereit','Pausen nach Regelung','Krankmeldung rechtzeitig (Tab Betrieb)']},
+    {no:'10', title:'Notfälle & Arbeitsschutz', desc:'Erste Hilfe, Feuer, Unfall, Sicherheit', read:'ca. 11 Min', status:'plan', lead:'Sicherheit geht vor. Im Notfall zählt schnelles, richtiges Handeln.', points:['Erste-Hilfe-Kasten & Fluchtwege kennen','Feuerlöscher-Standort kennen','Unfälle sofort melden','Bei Gefahr: sofort handeln']},
+    {no:'11', title:'Verhalten, Regeln & Konsequenzen', desc:'Was nicht akzeptiert wird, 3-Stufen-Modell', read:'ca. 10 Min', status:'plan', lead:'Klare Regeln schützen das Team und die Marke.', points:['Respekt gegenüber allen','Kein Diebstahl, keine Unehrlichkeit','3-Stufen-Modell bei Verstößen','Standard vor Gefühl']},
+    {no:'12', title:'Schulung, Karriere & Abschluss', desc:'Schulungsplan, Prüfung, Unterschrift', read:'ca. 10 Min', status:'plan', lead:'Wer Standards lebt, wächst mit uns — vom Team zum Partner.', points:['Strukturierte Einarbeitung','Prüfung & Empfangsbestätigung','Karriereweg: SL → RL → Franchise','Onboarding im Tab Betrieb']},
+  ];}
+
+  inventory(){ return [
+    {name:'Buns (80 g)', min:120, max:400, current:90},
+    {name:'Smash Patties (110 g)', min:150, max:500, current:420},
+    {name:'Cheddar Käse', min:80, max:250, current:70},
+    {name:'Gurken (Eimer)', min:4, max:12, current:5},
+    {name:'Tomaten (kg)', min:6, max:20, current:15},
+    {name:'Eisbergsalat (Kopf)', min:8, max:25, current:8},
+    {name:'Currysoße (L)', min:5, max:18, current:12},
+    {name:'Pommes TK (kg)', min:20, max:60, current:18},
+  ];}
+
+  shifts(){ return [
+    {day:'Montag', date:'21.07.', slots:[{name:'Yusuf', time:'11:30–19:30'},{name:'Aylin', time:'16:30–20:30'}]},
+    {day:'Dienstag', date:'22.07.', slots:[{name:'Mohtasim', time:'10:30–18:00'},{name:'Yusuf', time:'16:30–20:30'}]},
+    {day:'Mittwoch', date:'23.07.', slots:[{name:'Aylin', time:'11:30–19:30'}]},
+    {day:'Donnerstag', date:'24.07.', slots:[{name:'Yusuf', time:'11:30–19:30'},{name:'Deniz', time:'16:30–20:30'}]},
+    {day:'Freitag', date:'25.07.', slots:[{name:'Mughees', time:'10:30–20:00'},{name:'Yusuf', time:'11:30–19:30'}]},
+    {day:'Samstag', date:'26.07.', slots:[{name:'Alle', time:'ganztägig'}]},
+  ];}
+
+  modules(){ return [
+    {id:'m1', title:'Werte, Mission & DNA verstanden', day:'Tag 1'},
+    {id:'m2', title:'Erscheinungsbild & Hygiene', day:'Tag 1'},
+    {id:'m3', title:'Kasse & Gastkontakt (SOP 11)', day:'Tag 2'},
+    {id:'m4', title:'Salattheke & Bain Marie (SOP 9/10)', day:'Tag 3'},
+    {id:'m5', title:'Build Cards: Classic Smash & Chilli Milli', day:'Tag 4'},
+    {id:'m6', title:'Öffnungs- & Schließablauf selbstständig', day:'Tag 5'},
+  ];}
+
+  // ---------- HANDLERS ----------
+  login(role){ this.setState({loggedIn:true, role, tab:'start', open:null, bsub:null}); }
+  setLang(lang){ this.setState({lang}); }
+  setRole(role){ this.setState({role}); }
+  go(tab){ this.setState({tab, open:null, bsub:null, wsub:'sop'}); }
+  openDetail(type,id){ this.setState({open:{type,id}}); }
+  back(){ this.setState({open:null}); }
+  openBetrieb(sub){ this.setState({tab:'betrieb', bsub:sub, open:null}); }
+  backBetrieb(){ this.setState({bsub:null}); }
+  toggleCheck(key){ this.setState(s=>({checks:{...s.checks,[key]:!s.checks[key]}})); }
+  toggleMod(id){ this.setState(s=>({mods:{...s.mods,[id]:!s.mods[id]}})); }
+  resetChecklist(clId){ this.setState(s=>{const c={...s.checks};Object.keys(c).forEach(k=>{if(k.indexOf(clId+':')===0)delete c[k];});return {checks:c};}); }
+  orderItem(name){ this.setState(s=>({ordered:{...s.ordered,[name]:true}})); this.showToast(this.T().ordered+': '+name); }
+  submitTemp(){ const v=parseFloat(this.state.tempValue); if(isNaN(v))return; const st=this.state.tempStation; const ok=this.tempOk(st,v); const now=new Date(); const time=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'); this.setState(s=>({tempLog:[{station:st,value:v,ok,time},...s.tempLog], tempValue:''})); this.showToast(this.T().temp_log+' ✓'); }
+  tempOk(st,v){ if(st==='Bain Marie')return v>=63; if(st==='Tiefkühler')return v<=-18; return v>=2&&v<=7; }
+  submitSick(){ if(!this.state.sickFrom)return; const range=this.state.sickFrom+(this.state.sickTo?' – '+this.state.sickTo:''); this.setState(s=>({sickList:[{range,reason:s.sickReason||'—'},...s.sickList], sickFrom:'',sickTo:'',sickReason:''})); this.showToast(this.T().submit+' ✓'); }
+  submitReport(){ const txt=this.state.reportText.trim(); if(!txt)return; this.setState(s=>({extraMeld:[{text:txt, meta:'gerade eben · '+this.roleName(s.role), sev:'neu'},...s.extraMeld], reportText:''})); this.showToast(this.T().send+' ✓'); }
+  roleName(r){ const t=this.T(); return r==='ma'?t.role_ma:r==='sl'?t.role_sl:t.role_mgmt; }
+
+  // ---------- STYLE HELPERS ----------
+  navSide(id){ const base={display:'flex',alignItems:'center',gap:'12px',padding:'11px 14px',borderRadius:'10px',cursor:'pointer',border:'none',background:'transparent',color:'rgba(246,243,238,.6)',font:"600 14.5px 'Inter',sans-serif",width:'100%',textAlign:'left'}; return this.state.tab===id?{...base,background:'#f07f13',color:'#17130f'}:base; }
+  navBot(id){ const a=this.state.tab===id; return {flex:'1',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px',padding:'7px 2px',background:'transparent',border:'none',cursor:'pointer',color:a?'#f5a11f':'rgba(246,243,238,.5)',font:"600 10px 'Inter'"}; }
+  langBtn(l,big){ const a=this.state.lang===l; const pad=big?'6px 11px':'5px 9px'; return {padding:pad,borderRadius:'6px',border:'none',cursor:'pointer',font:"600 12px 'IBM Plex Mono'",background:a?'#f07f13':'transparent',color:a?'#17130f':'rgba(246,243,238,.6)'}; }
+  hvBtn(n){ const a=this.state.homeVar===n; return {padding:'7px 13px',borderRadius:'7px',border:'none',cursor:'pointer',font:"600 12.5px 'Inter'",background:a?'#17130f':'transparent',color:a?'#f6f3ee':'#7c756c'}; }
+  wsubBtn(s){ const a=this.state.wsub===s; return {padding:'9px 16px',borderRadius:'9px',border:'1px solid '+(a?'#17130f':'#e4ded4'),cursor:'pointer',font:"600 13.5px 'Inter'",background:a?'#17130f':'#fff',color:a?'#f6f3ee':'#7c756c',whiteSpace:'nowrap'}; }
+  pill(active,accent){ return {padding:'8px 15px',borderRadius:'8px',border:'1px solid '+(active?accent:'#e4ded4'),cursor:'pointer',font:"600 13px 'Inter'",background:active?accent:'#fff',color:active?'#fff':'#7c756c'}; }
+  barStyle(pct,color){ return {height:'100%',width:pct+'%',background:color,borderRadius:'5px',transition:'.4s'}; }
+
+  renderVals(){
+    const s=this.state; const t=this.T(); const isMobile=s.vw<900;
+    const cls=this.checklists();
+    const doneCount=cl=>cl.items.filter(i=>s.checks[cl.id+':'+i.id]).length;
+    const pctOf=cl=>Math.round(doneCount(cl)/cl.items.length*100);
+    const oeff=cls[0]; const openDone=doneCount(oeff), openTotal=oeff.items.length, openPct=pctOf(oeff);
+
+    // XP / gamification
+    const totalDone=cls.reduce((a,cl)=>a+doneCount(cl),0);
+    const modDone=this.modules().filter(m=>s.mods[m.id]).length;
+    const xp=totalDone*15+modDone*40; const level=Math.floor(xp/200)+1; const xpBase=(level-1)*200; const xpNext=level*200;
+    const badges=[
+      {name:'Erste Schicht', icon:'🏁', earned:true},
+      {name:'Saubere Station', icon:'✨', earned:totalDone>=3},
+      {name:'SOP-Profi', icon:'📘', earned:modDone>=3},
+      {name:'Team-Player', icon:'🤝', earned:s.sickList.length>=0},
+      {name:'Streak x5', icon:'🔥', earned:false},
+    ].map(b=>({...b, style:{width:'42px',height:'42px',borderRadius:'11px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'20px',background:b.earned?'#fbe9d6':'#f0eae0',border:'1px solid '+(b.earned?'#f0c79a':'#e4ded4'),filter:b.earned?'none':'grayscale(1) opacity(.5)'}}));
+
+    // checklist cards
+    const checklistCards=cls.map(cl=>{const d=doneCount(cl),tot=cl.items.length,pct=Math.round(d/tot*100);return {title:cl.title, desc:cl.desc, accent:cl.accent, done:d, total:tot, barStyle:this.barStyle(pct,cl.accent), badgeStyle:{font:"700 12px 'IBM Plex Mono'",padding:'3px 9px',borderRadius:'20px',background:pct===100?'#e8f5ec':'#f0eae0',color:pct===100?'#1c6d3c':'#7c756c',flex:'none'}, open:()=>this.openDetail('cl',cl.id)};});
+
+    // active checklist detail
+    let cl=null; if(s.open&&s.open.type==='cl'){const found=cls.find(c=>c.id===s.open.id);if(found){const d=doneCount(found),tot=found.items.length,pct=Math.round(d/tot*100);cl={title:found.title, done:d, total:tot, pct, complete:d===tot, weekly:found.weekly||'', barStyle:this.barStyle(pct,found.accent), items:found.items.map(it=>{const key=found.id+':'+it.id;const ch=!!s.checks[key];return {text:it.text, checked:ch, boxStyle:{flex:'none',width:'24px',height:'24px',borderRadius:'7px',border:'2px solid '+(ch?'#2e9e57':'#c9c0b2'),background:ch?'#2e9e57':'#fff',display:'flex',alignItems:'center',justifyContent:'center',marginTop:'1px'}, textStyle:{fontSize:'15px',lineHeight:'1.5',color:ch?'#a49c90':'#2a2620',textDecoration:ch?'line-through':'none'}, toggle:()=>this.toggleCheck(key)};})};}}
+
+    // sops
+    const q=s.query.toLowerCase();
+    const sopsAll=this.sops().map(x=>({...x, open:()=>this.openDetail('sop',x.id)}));
+    const sopsF=q?sopsAll.filter(x=>(x.title+x.summary+x.no).toLowerCase().includes(q)):sopsAll;
+    let sop=null; if(s.open&&s.open.type==='sop')sop=this.sops().find(x=>x.id===s.open.id);
+
+    // chapters
+    const chAll=this.chapters().map(c=>({...c, statusLabel:c.status==='done'?'fertig':'in Vorb.', statusStyle:{font:"600 10px 'IBM Plex Mono'",letterSpacing:'.06em',textTransform:'uppercase',padding:'3px 9px',borderRadius:'20px',whiteSpace:'nowrap',background:c.status==='done'?'#f0e6cd':'#f0eae0',color:c.status==='done'?'#8a6a15':'#a49c90'}, open:()=>this.openDetail('ch',c.no)}));
+    const chaptersF=q?chAll.filter(c=>(c.title+c.desc+c.no).toLowerCase().includes(q)):chAll;
+    let chapter=null; if(s.open&&s.open.type==='ch')chapter=this.chapters().find(c=>c.no===s.open.id);
+
+    // recipes
+    const recAll=this.recipes().map(r=>({...r, open:()=>this.openDetail('rez',r.id)}));
+    const recipesF=q?recAll.filter(r=>r.name.toLowerCase().includes(q)):recAll;
+    let recipe=null; if(s.open&&s.open.type==='rez'){const r=this.recipes().find(x=>x.id===s.open.id);if(r){recipe={...r, steps:r.steps.map((txt,i)=>{const key='rez_'+r.id+'_'+i;const ch=!!s.checks[key];return {n:i+1, text:txt, checked:ch, numStyle:{flex:'none',width:'26px',height:'26px',borderRadius:'50%',background:ch?'#2e9e57':'#2a1c47',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',font:"800 12px 'Archivo'"}, textStyle:{flex:'1',fontSize:'14.5px',color:ch?'#a49c90':'#2a2620',textDecoration:ch?'line-through':'none'}, toggle:()=>this.toggleCheck(key)};})};}}
+
+    // inventory
+    const inventory=this.inventory().map(i=>{const ord=!!s.ordered[i.name];let status,col,bg;if(i.current<=i.min){status='kritisch';col='#b1470f';bg='#fbe9d6';}else if(i.current<i.min*1.4){status='niedrig';col='#8a6a15';bg='#f7f0e2';}else{status='ok';col='#1c6d3c';bg='#e8f5ec';}return {...i, statusLabel:status, statusStyle:{display:'inline-block',marginTop:'3px',font:"600 10px 'IBM Plex Mono'",letterSpacing:'.06em',textTransform:'uppercase',padding:'2px 8px',borderRadius:'20px',background:bg,color:col}, order:()=>this.orderItem(i.name), btnLabel:ord?t.ordered:t.order, btnStyle:{padding:'7px 13px',borderRadius:'8px',border:'none',cursor:ord?'default':'pointer',font:"700 12px 'Inter'",background:ord?'#e8f5ec':(i.current<=i.min?'#f07f13':'#f0eae0'),color:ord?'#1c6d3c':(i.current<=i.min?'#17130f':'#7c756c')}};});
+
+    // shifts
+    const shifts=this.shifts().map((d,idx)=>({...d, rowStyle:{display:'flex',gap:'14px',padding:'14px 18px',borderBottom:idx<5?'1px solid #f0eae0':'none',alignItems:'flex-start'}, slots:d.slots.map(sl=>({...sl, style:{font:"600 12px 'Inter'",padding:'5px 11px',borderRadius:'20px',background:'#f4f1ec',border:'1px solid #e4ded4',color:'#2a2620',whiteSpace:'nowrap'}}))}));
+
+    // temp log
+    const tempLog=s.tempLog.map(e=>({...e, color:e.ok?'#1c6d3c':'#b1470f', dotStyle:{width:'9px',height:'9px',borderRadius:'50%',background:e.ok?'#2e9e57':'#e8631a',flex:'none'}, tag:e.ok?'OK':'PRÜFEN', tagStyle:{font:"600 10px 'IBM Plex Mono'",padding:'2px 8px',borderRadius:'20px',background:e.ok?'#e8f5ec':'#fbe9d6',color:e.ok?'#1c6d3c':'#b1470f'}}));
+
+    // meldungen (dashboard + report list)
+    const baseMeld=[
+      {text:'Pommes-TK unter MIN — nachbestellen', meta:'vor 20 Min · Inventur', sev:'warn'},
+      {text:'Bain Marie Currysoße fast leer', meta:'vor 40 Min · Küche', sev:'warn'},
+      {text:'Eisbergsalat Bestand niedrig', meta:'heute 11:05 · Inventur', sev:'info'},
+    ];
+    const meldungen=[...s.extraMeld,...baseMeld].map(m=>({...m, dotStyle:{width:'9px',height:'9px',borderRadius:'50%',marginTop:'5px',flex:'none',background:m.sev==='warn'?'#e8631a':m.sev==='neu'?'#7C3AED':'#b8912e'}}));
+
+    // modules / onboarding
+    const modules=this.modules().map(m=>{const ch=!!s.mods[m.id];return {...m, checked:ch, boxStyle:{flex:'none',width:'24px',height:'24px',borderRadius:'7px',border:'2px solid '+(ch?'#2e9e57':'#c9c0b2'),background:ch?'#2e9e57':'#fff',display:'flex',alignItems:'center',justifyContent:'center'}, textStyle:{display:'block',fontWeight:'600',fontSize:'15px',color:ch?'#a49c90':'#17130f',textDecoration:ch?'line-through':'none'}, toggle:()=>this.toggleMod(m.id)};});
+    const onbDone=modDone, onbTotal=this.modules().length, onbPct=Math.round(onbDone/onbTotal*100);
+
+    // betrieb tiles
+    const betriebTiles=[
+      {key:'shift', icon:'📅', tint:'#e9e0f6', title:t.b_shift, desc:'Wer wann arbeitet — diese Woche.'},
+      {key:'sick', icon:'🤒', tint:'#fbe9d6', title:t.b_sick, desc:'Abwesenheit rechtzeitig melden.'},
+      {key:'inv', icon:'📦', tint:'#e8f0e6', title:t.b_inv, desc:'MIN/MAX-Bestand & Nachbestellung.'},
+      {key:'temp', icon:'🌡️', tint:'#e6eef7', title:t.b_temp, desc:'Temperaturen prüfen & dokumentieren.'},
+      {key:'report', icon:'📣', tint:'#f7ece0', title:t.b_report, desc:'Probleme & Aufgaben melden.'},
+      {key:'onboard', icon:'🎓', tint:'#f0e6cd', title:t.b_onboard, desc:'Einarbeitung & Schulungsplan.'},
+    ].map(b=>({...b, open:()=>this.openBetrieb(b.key)}));
+
+    // home feed cards (variant Karten)
+    const feedCards=[
+      {kicker:t.priority, title:t.cl_oeffnen, body:openDone+' / '+openTotal+' Schritte erledigt. Mach die Station einsatzbereit.', cta:t.continue, accent:'#f07f13', action:()=>this.openDetail('cl','oeffnen')},
+      {kicker:t.myshift, title:this.shiftForRole(), body:'Öffnungszeiten Mo–Sa 10:30–20:00. Schichtbeginn = einsatzbereit.', cta:t.b_shift, accent:'#7C3AED', action:()=>this.openBetrieb('shift')},
+      {kicker:'Build Card', title:'Classic Smash', body:'10 Schichten, exakt nach Reihenfolge bauen. Antippen zum Nachschlagen.', cta:t.qa_recipe, accent:'#b8912e', action:()=>this.openDetail('rez','classic')},
+      {kicker:'SOP 11', title:'Kasse', body:'Kundenkontakt, Sätze & Geldhandling — der Standard am Tresen.', cta:t.qa_sop, accent:'#2e9e57', action:()=>this.openDetail('sop','kasse')},
+      {kicker:t.b_onboard, title:onbDone+' / '+onbTotal+' Module', body:'Dein Schulungsfortschritt. Schließe die nächsten Module ab.', cta:t.nav_betrieb, accent:'#e8631a', action:()=>this.openBetrieb('onboard')},
+    ];
+
+    // dashboard stat tiles + kpis
+    const statTiles=[
+      {label:t.today, value:openPct+'%', delta:t.cl_oeffnen, accent:'#f07f13'},
+      {label:t.streak, value:'5 🔥', delta:'Tage in Folge', accent:'#e8631a'},
+      {label:t.level, value:level, delta:xp+' XP', accent:'#7C3AED'},
+      {label:t.b_onboard, value:onbDone+'/'+onbTotal, delta:onbPct+'%', accent:'#b8912e'},
+    ];
+    const clStatus=cls.map(c=>{const pct=pctOf(c);return {title:c.title, pct, barStyle:this.barStyle(pct,c.accent)};});
+    const kpis=[
+      {label:'Umsatz heute', value:'2.840 €', delta:'+12% vs. Vortag'},
+      {label:'Bestellungen', value:'187', delta:'+8%'},
+      {label:'Ø Bon', value:'15,20 €', delta:'+3%'},
+      {label:'Qualität', value:'96%', delta:'Standard erfüllt'},
+    ];
+    const standorte=[
+      {name:'Container · Idar-Oberstein', status:'aktiv', on:true},
+      {name:'Restaurant · geplant', status:'in Planung', on:false},
+      {name:'Filiale 3 · Vision', status:'Ziel 100+', on:false},
+    ].map(x=>({...x, dotStyle:{width:'9px',height:'9px',borderRadius:'50%',flex:'none',background:x.on?'#2e9e57':'rgba(246,243,238,.3)'}}));
+    const team=[
+      {name:'Mughees Iqbal', role:'Inhaber', initial:'M', color:'#f07f13'},
+      {name:'Mohtasim Iqbal', role:'Inhaber', initial:'M', color:'#f5a11f'},
+      {name:'Aylin', role:'Schichtleiter', initial:'A', color:'#a879f5'},
+      {name:'Yusuf', role:'Mitarbeiter', initial:'Y', color:'#7fd39b'},
+      {name:'Deniz', role:'Aushilfe', initial:'D', color:'#d8b45c'},
+    ];
+
+    const roleColors={ma:'#f07f13', sl:'#a879f5', mgmt:'#d8b45c'};
+    const userNames={ma:'Yusuf', sl:'Aylin', mgmt:'Mughees'};
+    const now=new Date(); const h=now.getHours();
+    const greeting=h<11?(s.lang==='de'?'Guten Morgen':s.lang==='en'?'Good morning':s.lang==='tr'?'Günaydın':'صباح الخير'):h<18?(s.lang==='de'?'Servus':s.lang==='en'?'Hello':s.lang==='tr'?'Merhaba':'مرحبا'):(s.lang==='de'?'Guten Abend':s.lang==='en'?'Good evening':s.lang==='tr'?'İyi akşamlar':'مساء الخير');
+    const days=['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const dateLabel=days[now.getDay()]+' · '+String(now.getDate()).padStart(2,'0')+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+now.getFullYear();
+
+    const qaStyle={display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'8px',padding:'14px',background:'#f4f1ec',border:'1px solid #eee7dc',borderRadius:'12px',cursor:'pointer',font:"600 13px 'Inter'",color:'#17130f',textAlign:'left'};
+    const qaIcon=(c)=>({width:'30px',height:'30px',borderRadius:'8px',background:c,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',font:"800 15px 'Archivo'"});
+
+    const inputStyle={width:'100%',background:'#faf7f2',border:'1px solid #e4ded4',borderRadius:'10px',padding:'11px 13px',fontSize:'15px',color:'#2a2620',marginBottom:'14px'};
+    const textareaStyle={width:'100%',background:'#faf7f2',border:'1px solid #e4ded4',borderRadius:'10px',padding:'11px 13px',fontSize:'15px',color:'#2a2620',marginBottom:'14px',minHeight:'90px',resize:'vertical',fontFamily:'inherit'};
+    const labelStyle={display:'block',font:"600 11px 'IBM Plex Mono'",letterSpacing:'.1em',textTransform:'uppercase',color:'#7c756c',marginBottom:'6px'};
+    const primaryBtnStyle={background:'#f07f13',color:'#17130f',border:'none',borderRadius:'10px',padding:'12px 24px',font:"700 14px 'Inter'",cursor:'pointer'};
+    const backBtnStyle={background:'transparent',border:'none',color:'#7c756c',font:"600 13px 'Inter'",cursor:'pointer',padding:'4px 0'};
+
+    return {
+      t, dir:s.lang==='ar'?'rtl':'ltr',
+      notLoggedIn:!s.loggedIn, loggedIn:s.loggedIn,
+      // login
+      loginMa:()=>this.login('ma'), loginSl:()=>this.login('sl'), loginMg:()=>this.login('mgmt'),
+      setLangDe:()=>this.setLang('de'), setLangEn:()=>this.setLang('en'), setLangTr:()=>this.setLang('tr'), setLangAr:()=>this.setLang('ar'),
+      lg_de:this.langBtn('de',1), lg_en:this.langBtn('en',1), lg_tr:this.langBtn('tr',1), lg_ar:this.langBtn('ar',1),
+      lg2_de:this.langBtn('de',0), lg2_en:this.langBtn('en',0), lg2_tr:this.langBtn('tr',0), lg2_ar:this.langBtn('ar',0),
+      // chrome
+      roleLabel:this.roleName(s.role), userName:userNames[s.role], userInitial:userNames[s.role][0], roleDotStyle:{width:'8px',height:'8px',borderRadius:'50%',background:roleColors[s.role]},
+      taglineStyle:{font:"600 9px 'IBM Plex Mono'",letterSpacing:'.2em',textTransform:'uppercase',color:'#b8912e',marginTop:'1px',display:isMobile?'none':'block'},
+      showSidebar:!isMobile, showBottomNav:isMobile,
+      mainPadStyle:{padding:isMobile?'18px 16px 30px':'28px 34px 40px',maxWidth:isMobile?'none':'1160px',margin:'0 auto'},
+      routeKey:s.tab+'_'+s.wsub+'_'+(s.open?s.open.type+s.open.id:'')+'_'+(s.bsub||'')+'_'+s.homeVar,
+      // nav
+      goStart:()=>this.go('start'), goCheck:()=>this.go('check'), goWissen:()=>this.go('wissen'), goBetrieb:()=>this.go('betrieb'), goMehr:()=>this.go('mehr'),
+      ns_start:this.navSide('start'), ns_check:this.navSide('check'), ns_wissen:this.navSide('wissen'), ns_betrieb:this.navSide('betrieb'), ns_mehr:this.navSide('mehr'),
+      nb_start:this.navBot('start'), nb_check:this.navBot('check'), nb_wissen:this.navBot('wissen'), nb_betrieb:this.navBot('betrieb'), nb_mehr:this.navBot('mehr'),
+      level, xp, xpNext, streak:5, xpBarStyle:{height:'100%',width:Math.min(100,Math.round((xp-xpBase)/(xpNext-xpBase)*100))+'%',background:'#f07f13',borderRadius:'5px',transition:'.4s'},
+      // start
+      isStart:s.tab==='start'&&!s.open, homeVar:s.homeVar, homeFocus:s.homeVar===0, homeCards:s.homeVar===1, homeDash:s.homeVar===2,
+      hv0:()=>this.setState({homeVar:0}), hv1:()=>this.setState({homeVar:1}), hv2:()=>this.setState({homeVar:2}),
+      hv_0:this.hvBtn(0), hv_1:this.hvBtn(1), hv_2:this.hvBtn(2),
+      greeting, dateLabel, ringOffset:326.7*(1-openPct/100), openPct, openDone, openTotal,
+      openOeffnen:()=>this.openDetail('cl','oeffnen'), openSopList:()=>this.setState({tab:'wissen',wsub:'sop',open:null}), openRezList:()=>this.setState({tab:'wissen',wsub:'rez',open:null}),
+      openTemp:()=>this.openBetrieb('temp'), openSick:()=>this.openBetrieb('sick'), openReport:()=>this.openBetrieb('report'),
+      qaStyle, qaIcon1:qaIcon('#2e9e57'), qaIcon2:qaIcon('#7C3AED'), qaIcon3:qaIcon('#b8912e'), qaIcon4:qaIcon('#2b7fb8'), qaIcon5:qaIcon('#e8631a'), qaIcon6:qaIcon('#c0392b'),
+      shiftToday:this.shiftForRole(), shiftRole:this.roleName(s.role), badges, feedCards, statTiles, clStatus,
+      // check
+      isCheck:s.tab==='check'&&!s.open, checklistCards, clDetail:!!(s.open&&s.open.type==='cl'), cl, resetCl:()=>this.resetChecklist(s.open&&s.open.id), back:()=>this.back(), backBtnStyle,
+      // wissen
+      isWissen:s.tab==='wissen'&&!s.open, query:s.query, onQuery:e=>this.setState({query:e.target.value}),
+      wsubSop:()=>this.setState({wsub:'sop'}), wsubHb:()=>this.setState({wsub:'hb'}), wsubRez:()=>this.setState({wsub:'rez'}),
+      ws_sop:this.wsubBtn('sop'), ws_hb:this.wsubBtn('hb'), ws_rez:this.wsubBtn('rez'),
+      wIsSop:s.wsub==='sop', wIsHb:s.wsub==='hb', wIsRez:s.wsub==='rez',
+      sopsF, chaptersF, recipesF, sopDetail:!!(s.open&&s.open.type==='sop'), sop, chDetail:!!(s.open&&s.open.type==='ch'), chapter, rezDetail:!!(s.open&&s.open.type==='rez'), recipe,
+      // betrieb
+      isBetrieb:s.tab==='betrieb'&&!s.bsub, betriebTiles, backBetrieb:()=>this.backBetrieb(),
+      bShift:s.tab==='betrieb'&&s.bsub==='shift', shifts,
+      bSick:s.tab==='betrieb'&&s.bsub==='sick', sickFrom:s.sickFrom, sickTo:s.sickTo, sickReason:s.sickReason, sickList:s.sickList, hasSick:s.sickList.length>0,
+      onSickFrom:e=>this.setState({sickFrom:e.target.value}), onSickTo:e=>this.setState({sickTo:e.target.value}), onSickReason:e=>this.setState({sickReason:e.target.value}), submitSick:()=>this.submitSick(),
+      bInv:s.tab==='betrieb'&&s.bsub==='inv', inventory,
+      bTemp:s.tab==='betrieb'&&s.bsub==='temp', tempStation:s.tempStation, tempValue:s.tempValue, tempLog, hasTemp:tempLog.length>0,
+      onTempStation:e=>this.setState({tempStation:e.target.value}), onTempValue:e=>this.setState({tempValue:e.target.value}), submitTemp:()=>this.submitTemp(),
+      bReport:s.tab==='betrieb'&&s.bsub==='report', reportText:s.reportText, onReport:e=>this.setState({reportText:e.target.value}), submitReport:()=>this.submitReport(), meldungen,
+      bOnboard:s.tab==='betrieb'&&s.bsub==='onboard', modules, onbDone, onbTotal, onbBarStyle:this.barStyle(onbPct,'#f07f13'),
+      // mehr
+      isMehr:s.tab==='mehr', canMgmt:s.role==='mgmt', mgmtLocked:s.role!=='mgmt', kpis, standorte, team,
+      setRoleMa:()=>this.setRole('ma'), setRoleSl:()=>this.setRole('sl'), setRoleMg:()=>this.setRole('mgmt'),
+      rs_ma:this.pill(s.role==='ma','#f07f13'), rs_sl:this.pill(s.role==='sl','#7C3AED'), rs_mg:this.pill(s.role==='mgmt','#b8912e'),
+      rl_de:this.pill(s.lang==='de','#17130f'), rl_en:this.pill(s.lang==='en','#17130f'), rl_tr:this.pill(s.lang==='tr','#17130f'), rl_ar:this.pill(s.lang==='ar','#17130f'),
+      logout:()=>this.setState({loggedIn:false}),
+      // forms shared
+      inputStyle, textareaStyle, labelStyle, primaryBtnStyle,
+      // toast
+      hasToast:!!s.toast, toast:s.toast,
+    };
+  }
+
+  shiftForRole(){ const r=this.state.role; return r==='mgmt'?'10:30–20:00':r==='sl'?'11:30–19:30':'11:30–19:30'; }
+}
+</script>
+</body>
+</html>
