@@ -426,6 +426,7 @@ function deriveVals(s, a) {
     t, dir: s.lang === 'ar' ? 'rtl' : 'ltr',
     notLoggedIn: !s.loggedIn, loggedIn: s.loggedIn,
     // auth
+    role: s.role,
     authReady: s.authReady, authError: s.authError, authErrorDetail: s.authErrorDetail, authBusy: s.authBusy,
     signIn: a.signIn, isConfigured: isSupabaseConfigured, profile: s.profile, showToast: a.showToast, uid: s.uid,
     // Stempeluhr
