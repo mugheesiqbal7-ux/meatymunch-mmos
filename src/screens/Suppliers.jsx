@@ -1,4 +1,6 @@
+import { useState, useEffect, useCallback } from 'react';
 import { suppliers, orderCalendar, supplierById, openPoints } from '../data/suppliers.js';
+import { fetchSupplierProducts, updateProductPrice, addProduct, deleteProduct, fmtEuro, parseEuro } from '../lib/supplierProducts.js';
 
 const typeStyle = {
   order: { bg: '#fbe9d6', border: '#f0c79a', color: '#b1470f', label: 'Bestellen', icon: '📞' },
@@ -10,6 +12,12 @@ export default function Suppliers({ v }) {
   const { t } = v;
   const jsDow = new Date().getDay(); // 0=So..6=Sa
   const today = orderCalendar.find((d) => d.dow === jsDow) || null;
+  const isMgmt = v.role === 'mgmt';
+
+  const [products, setProducts] = useState(null);
+  const reload = useCallback(async () => { setProducts(await fetchSupplierProducts()); }, []);
+  useEffect(() => { reload(); }, [reload]);
+  const bySupplier = (products || []).reduce((acc, p) => { (acc[p.supplier] ||= []).push(p); return acc; }, {});
   const orderTasksToday = today ? today.tasks.filter((x) => x.type === 'order') : [];
 
   return (
@@ -82,25 +90,11 @@ export default function Suppliers({ v }) {
         })}
       </div>
 
-      {/* Lieferanten-Karten */}
+      {/* Lieferanten mit Sortiment & Preisen */}
       <div style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.12em', textTransform: 'uppercase', color: '#7c756c', margin: '4px 0 10px' }}>{t.sup_list}</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,280px),1fr))', gap: '14px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         {suppliers.map((s) => (
-          <div key={s.id} style={{ background: '#fff', border: '1px solid #e4ded4', borderRadius: '16px', overflow: 'hidden', borderTop: `3px solid ${s.color}` }}>
-            <div style={{ padding: '16px 18px 12px' }}>
-              <div style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: '19px', color: '#17130f' }}>{s.name}</div>
-              <div style={{ font: "600 11px 'IBM Plex Mono'", color: s.color, marginTop: '3px' }}>{s.rhythm}</div>
-              <div style={{ fontSize: '13px', color: '#7c756c', marginTop: '8px', display: 'flex', gap: '7px' }}><span>📅</span><span>{s.order}</span></div>
-            </div>
-            <div style={{ borderTop: '1px solid #f0eae0', padding: '12px 18px 16px' }}>
-              <div style={{ font: "600 10px 'IBM Plex Mono'", letterSpacing: '.1em', textTransform: 'uppercase', color: '#a49c90', marginBottom: '8px' }}>{t.sup_products}</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {s.products.map((p, i) => (
-                  <span key={i} style={{ font: "500 12px 'Inter'", background: '#f4f1ec', border: '1px solid #e4ded4', borderRadius: '20px', padding: '4px 10px', color: '#2a2620' }}>{p}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+          <SupplierCard key={s.id} s={s} products={bySupplier[s.id]} isMgmt={isMgmt} reload={reload} showToast={v.showToast} t={t} />
         ))}
       </div>
 
@@ -114,3 +108,95 @@ export default function Suppliers({ v }) {
     </div>
   );
 }
+
+function SupplierCard({ s, products, isMgmt, reload, showToast, t }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState({});
+  const [busy, setBusy] = useState(false);
+
+  const list = products || [];
+
+  function startEdit() {
+    const d = {};
+    list.forEach((p) => { d[p.id] = (p.price_cents / 100).toFixed(2).replace('.', ','); });
+    setDraft(d);
+    setEditing(true);
+  }
+
+  async function save() {
+    setBusy(true);
+    for (const p of list) {
+      const cents = parseEuro(draft[p.id]);
+      if (cents != null && cents !== p.price_cents) {
+        const { error } = await updateProductPrice(p.id, cents);
+        if (error) { showToast(error.message); setBusy(false); return; }
+      }
+    }
+    await reload();
+    setBusy(false);
+    setEditing(false);
+    showToast(t.sup_saved);
+  }
+
+  async function addRow() {
+    const name = window.prompt(t.sup_add_name);
+    if (!name) return;
+    const artNo = window.prompt(t.sup_add_artno) || null;
+    const priceStr = window.prompt(t.sup_add_price) || '0';
+    const { error } = await addProduct({ supplier: s.id, art_no: artNo, name, price_cents: parseEuro(priceStr) || 0, sort: (list.length + 1) });
+    if (error) { showToast(error.message); return; }
+    await reload();
+    showToast(t.sup_added);
+  }
+
+  async function removeRow(p) {
+    if (!window.confirm(t.sup_delete_confirm + '\n\n' + p.name)) return;
+    const { error } = await deleteProduct(p.id);
+    if (error) { showToast(error.message); return; }
+    await reload();
+  }
+
+  return (
+    <div style={{ background: '#fff', border: '1px solid #e4ded4', borderRadius: '16px', overflow: 'hidden', borderTop: `3px solid ${s.color}` }}>
+      <div style={{ padding: '16px 18px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: '180px' }}>
+          <div style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: '19px', color: '#17130f' }}>{s.name}</div>
+          <div style={{ font: "600 11px 'IBM Plex Mono'", color: s.color, marginTop: '3px' }}>{s.rhythm}</div>
+          <div style={{ fontSize: '13px', color: '#7c756c', marginTop: '8px', display: 'flex', gap: '7px' }}><span>📅</span><span>{s.order}</span></div>
+        </div>
+        {isMgmt && !editing && list.length > 0 && (
+          <button onClick={startEdit} className="mm-press" style={miniBtn}>✏️ {t.sup_edit}</button>
+        )}
+      </div>
+
+      <div style={{ borderTop: '1px solid #f0eae0', padding: '10px 12px 14px' }}>
+        <div style={{ font: "600 10px 'IBM Plex Mono'", letterSpacing: '.1em', textTransform: 'uppercase', color: '#a49c90', margin: '4px 6px 6px' }}>{t.sup_products} {products == null ? '…' : `· ${list.length}`}</div>
+
+        {products == null && <div style={{ padding: '8px', color: '#a49c90', fontSize: '13px' }}>{t.time_loading}</div>}
+
+        {list.map((p) => (
+          <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 6px', borderBottom: '1px solid #f4efe6' }}>
+            {p.art_no && <span style={{ font: "500 11px 'IBM Plex Mono'", color: '#a49c90', width: '92px', flex: 'none', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.art_no}</span>}
+            <span style={{ flex: 1, fontSize: '13.5px', color: '#2a2620', lineHeight: 1.3 }}>{p.name}</span>
+            {editing ? (
+              <input value={draft[p.id] ?? ''} onChange={(e) => setDraft((d) => ({ ...d, [p.id]: e.target.value }))} inputMode="decimal" style={{ width: '74px', flex: 'none', background: '#faf7f2', border: '1px solid #e4ded4', borderRadius: '8px', padding: '6px 8px', fontSize: '13px', textAlign: 'right', fontFamily: "'IBM Plex Mono', monospace" }} />
+            ) : (
+              <span style={{ font: "700 13px 'IBM Plex Mono'", color: '#17130f', width: '74px', flex: 'none', textAlign: 'right' }}>{fmtEuro(p.price_cents)}</span>
+            )}
+            {editing && <button onClick={() => removeRow(p)} className="mm-press" aria-label="Löschen" style={{ background: 'transparent', border: 'none', color: '#b1470f', cursor: 'pointer', fontSize: '16px', flex: 'none', padding: '2px 4px' }}>×</button>}
+          </div>
+        ))}
+
+        {editing && (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '12px', padding: '0 6px' }}>
+            <button onClick={save} disabled={busy} className="mm-press" style={{ ...miniBtn, background: '#f07f13', color: '#17130f', border: 'none', opacity: busy ? 0.7 : 1 }}>{busy ? '…' : '✓ ' + t.sup_save}</button>
+            <button onClick={() => setEditing(false)} className="mm-press" style={miniBtn}>{t.sup_cancel}</button>
+            <button onClick={addRow} className="mm-press" style={miniBtn}>+ {t.sup_add}</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const miniBtn = { background: '#f4f1ec', border: '1px solid #e4ded4', borderRadius: '8px', padding: '7px 13px', font: "700 12.5px Inter", color: '#17130f', cursor: 'pointer', whiteSpace: 'nowrap' };

@@ -66,7 +66,11 @@ const de = {
   sup_today: 'Heute', sup_today_todo: 'Das musst du heute bestellen:',
   sup_today_none: 'Heute keine Bestellungen fällig.', sup_today_closed: 'Sonntag — geschlossen.',
   sup_closed: 'Geschlossen', sup_calendar: 'Bestellkalender (Mo–Sa)', sup_list: 'Unsere Lieferanten',
-  sup_products: 'Produkte', sup_open: 'Offene Punkte (noch festlegen)',
+  sup_products: 'Sortiment & Preise', sup_open: 'Offene Punkte (noch festlegen)',
+  sup_edit: 'Preise bearbeiten', sup_save: 'Speichern', sup_cancel: 'Abbrechen', sup_add: 'Artikel',
+  sup_saved: 'Preise gespeichert ✓', sup_added: 'Artikel hinzugefügt ✓',
+  sup_delete_confirm: 'Diesen Artikel wirklich löschen?',
+  sup_add_name: 'Artikelbezeichnung:', sup_add_artno: 'Artikelnummer (optional):', sup_add_price: 'Preis in € (z. B. 9,50):',
 };
 
 const en = {
@@ -135,7 +139,11 @@ const en = {
   sup_today: 'Today', sup_today_todo: 'Order these today:',
   sup_today_none: 'No orders due today.', sup_today_closed: 'Sunday — closed.',
   sup_closed: 'Closed', sup_calendar: 'Order calendar (Mon–Sat)', sup_list: 'Our suppliers',
-  sup_products: 'Products', sup_open: 'Open points (to define)',
+  sup_products: 'Range & prices', sup_open: 'Open points (to define)',
+  sup_edit: 'Edit prices', sup_save: 'Save', sup_cancel: 'Cancel', sup_add: 'Item',
+  sup_saved: 'Prices saved ✓', sup_added: 'Item added ✓',
+  sup_delete_confirm: 'Really delete this item?',
+  sup_add_name: 'Item name:', sup_add_artno: 'Article number (optional):', sup_add_price: 'Price in € (e.g. 9.50):',
 };
 
 const tr = {
