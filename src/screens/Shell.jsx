@@ -33,12 +33,14 @@ export default function Shell({ v }) {
   return (
     <div dir={v.dir} style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#f4f1ec', overflow: 'hidden' }}>
       {/* TOP BAR */}
-      <header style={{ flex: 'none', background: '#17130f', color: '#f6f3ee', display: 'flex', alignItems: 'center', gap: '14px', padding: '0 16px', height: '60px', borderBottom: '1px solid rgba(255,255,255,.08)', zIndex: 20 }}>
-        <img src={`${import.meta.env.BASE_URL}assets/logo-icon.jpeg`} alt="" style={{ width: '38px', height: '38px', borderRadius: '9px', objectFit: 'cover', flex: 'none' }} />
-        <div style={{ lineHeight: 1 }}>
-          <div style={{ fontFamily: 'Archivo', fontWeight: 900, fontSize: '17px', letterSpacing: '-.01em' }}>MEATY<span style={{ color: '#f07f13' }}>MUNCH</span></div>
-          <div style={v.taglineStyle}>{t.tagline}</div>
-        </div>
+      <header style={{ flex: 'none', background: '#17130f', color: '#f6f3ee', display: 'flex', alignItems: 'center', gap: '14px', padding: 'env(safe-area-inset-top) calc(16px + env(safe-area-inset-right)) 0 calc(16px + env(safe-area-inset-left))', height: 'calc(60px + env(safe-area-inset-top))', borderBottom: '1px solid rgba(255,255,255,.08)', zIndex: 20 }}>
+        <button onClick={v.goStart} className="mm-press" style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#f6f3ee', padding: 0 }}>
+          <img src={`${import.meta.env.BASE_URL}assets/logo-icon.jpeg`} alt="Home" style={{ width: '38px', height: '38px', borderRadius: '9px', objectFit: 'cover', flex: 'none' }} />
+          <div style={{ lineHeight: 1, textAlign: 'left' }}>
+            <div style={{ fontFamily: 'Archivo', fontWeight: 900, fontSize: '17px', letterSpacing: '-.01em' }}>MEATY<span style={{ color: '#f07f13' }}>MUNCH</span></div>
+            <div style={v.taglineStyle}>{t.tagline}</div>
+          </div>
+        </button>
         <div style={{ flex: 1 }} />
         <div style={{ display: 'flex', gap: '3px', background: 'rgba(255,255,255,.06)', borderRadius: '8px', padding: '3px' }}>
           <button onClick={v.setLangDe} style={v.lg2_de}>DE</button>
@@ -82,7 +84,7 @@ export default function Shell({ v }) {
 
       {/* BOTTOM NAV (mobile) */}
       {v.showBottomNav && (
-        <nav style={{ flex: 'none', background: '#17130f', borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', padding: '6px 4px calc(6px + env(safe-area-inset-bottom))', zIndex: 20 }}>
+        <nav style={{ flex: 'none', background: '#17130f', borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', padding: '6px calc(4px + env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) calc(4px + env(safe-area-inset-left))', zIndex: 20 }}>
           <button onClick={v.goStart} style={v.nb_start}><IconHome size={21} />{t.nav_start}</button>
           <button onClick={v.goCheck} style={v.nb_check}><IconCheck size={21} />{t.nav_check}</button>
           <button onClick={v.goWissen} style={v.nb_wissen}><IconBook size={21} />{t.nav_wissen}</button>

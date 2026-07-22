@@ -24,7 +24,7 @@ export default function Login({ v }) {
     : '';
 
   return (
-    <div style={{ minHeight: '100vh', background: 'radial-gradient(120% 90% at 78% 0%,#2a211a 0%,#17130f 60%)', display: 'flex', flexDirection: 'column', color: '#f6f3ee', padding: '26px 22px 40px' }}>
+    <div style={{ minHeight: '100vh', background: 'radial-gradient(120% 90% at 78% 0%,#2a211a 0%,#17130f 60%)', display: 'flex', flexDirection: 'column', color: '#f6f3ee', padding: 'calc(26px + env(safe-area-inset-top)) calc(22px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(22px + env(safe-area-inset-left))' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1080px', margin: '0 auto', width: '100%' }}>
         <div style={{ font: "600 11px 'IBM Plex Mono',monospace", letterSpacing: '.24em', textTransform: 'uppercase', color: 'rgba(246,243,238,.5)' }}>MMOS · Mitarbeiter-App</div>
         <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', borderRadius: '9px', padding: '4px' }}>
