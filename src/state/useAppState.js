@@ -4,8 +4,9 @@ import { supabase, isSupabaseConfigured, usernameToEmail } from '../lib/supabase
 import { adminCall } from '../lib/admin.js';
 import { fetchOpenEntry, fetchOpenBreak, clockInDb, clockOutDb, startBreakDb, endBreakDb } from '../lib/timeclock.js';
 import { handbookChapters } from '../data/handbook.js';
+import { sops as sopsData } from '../data/sops.js';
 import {
-  getChecklists, sops as sopsData, recipes as recipesData, chapters as chaptersData,
+  getChecklists, recipes as recipesData,
   inventory as inventoryData, shifts as shiftsData, modules as modulesData,
   kpis, standorteRaw, team, baseMeld, roleColors, userNames,
 } from '../data/content.js';
@@ -313,8 +314,15 @@ function deriveVals(s, a) {
 
   // sops
   const q = s.query.toLowerCase();
+  const blockText = (b) => {
+    if (b.t === 'steps') return b.items.map((it) => it.title + ' ' + it.text).join(' ');
+    if (b.t === 'ul') return b.items.join(' ');
+    if (b.t === 'table') return b.rows.flat().join(' ');
+    return (b.label || '') + ' ' + (b.text || '');
+  };
+  const sopSearchText = (x) => (x.no + ' ' + x.title + ' ' + x.summary + ' ' + (x.sections || []).map((sec) => sec.heading + ' ' + (sec.blocks || []).map(blockText).join(' ')).join(' ')).toLowerCase();
   const sopsAll = sopsData.map((x) => ({ ...x, open: () => a.openDetail('sop', x.id) }));
-  const sopsF = q ? sopsAll.filter((x) => (x.title + x.summary + x.no).toLowerCase().includes(q)) : sopsAll;
+  const sopsF = q ? sopsAll.filter((x) => sopSearchText(x).includes(q)) : sopsAll;
   let sop = null;
   if (s.open && s.open.type === 'sop') sop = sopsData.find((x) => x.id === s.open.id);
 

@@ -16,19 +16,21 @@ export function WissenHub({ v }) {
       {v.wIsSop && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,240px),1fr))', gap: '14px' }}>
           {v.sopsF.map((s, i) => (
-            <button key={i} onClick={s.open} style={{ textAlign: 'left', background: '#fff', border: '1px solid #e4ded4', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer', padding: 0, transition: '.15s' }}>
-              <div style={{ height: '150px', background: `#eee url('${s.img}') center/cover` }} />
+            <button key={i} onClick={s.open} className="mm-card" style={{ textAlign: 'left', background: '#fff', border: '1px solid #e4ded4', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer', padding: 0 }}>
+              {s.img ? (
+                <div style={{ height: '150px', background: `#eee url('${s.img}') center/cover` }} />
+              ) : (
+                <div style={{ height: '86px', background: `linear-gradient(120deg, ${s.accent || '#17130f'}, #17130f)`, display: 'flex', alignItems: 'center', padding: '0 18px' }}>
+                  <span style={{ fontFamily: 'Archivo', fontWeight: 900, fontSize: '40px', color: 'rgba(255,255,255,.9)', lineHeight: 1 }}>SOP {s.no}</span>
+                </div>
+              )}
               <div style={{ padding: '16px 18px' }}>
-                <div style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.1em', color: '#f07f13' }}>SOP {s.no}</div>
+                <div style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.1em', color: s.accent || '#f07f13' }}>SOP {s.no}</div>
                 <div style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: '18px', color: '#17130f', margin: '4px 0 4px' }}>{s.title}</div>
                 <div style={{ fontSize: '13px', color: '#7c756c', lineHeight: 1.4 }}>{s.summary}</div>
               </div>
             </button>
           ))}
-          <div style={{ background: '#f7f4ee', border: '1px dashed #d6cdbd', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: '#a49c90' }}>
-            <div style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: '17px', color: '#8a8072' }}>{t.more_sop}</div>
-            <div style={{ fontSize: '13px', marginTop: '5px', lineHeight: 1.4 }}>Grill · Chicken · Fritteuse · Burger Build · Verpackung — {t.in_prep}</div>
-          </div>
         </div>
       )}
 
@@ -69,25 +71,19 @@ export function SopDetail({ v }) {
   const { t, sop } = v;
   if (!sop) return null;
   return (
-    <div style={{ animation: 'mmfade .3s ease', maxWidth: '900px' }}>
+    <div style={{ animation: 'mmfade .3s ease', maxWidth: '760px' }}>
       <button onClick={v.back} style={v.backBtnStyle}>← {t.back}</button>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', margin: '14px 0 4px' }}><span style={{ font: "600 13px 'IBM Plex Mono'", letterSpacing: '.1em', color: '#f07f13' }}>SOP {sop.no}</span></div>
-      <h1 style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: 'clamp(26px,4.5vw,38px)', margin: '0 0 16px', color: '#17130f', letterSpacing: '-.02em' }}>{sop.title}</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,300px),1fr))', gap: '18px', alignItems: 'start' }}>
-        <img src={sop.img} alt={sop.title} style={{ width: '100%', borderRadius: '14px', border: '1px solid #e4ded4', boxShadow: '0 8px 24px rgba(0,0,0,.08)' }} />
-        <div>
-          <div style={{ background: '#fff', border: '1px solid #e4ded4', borderRadius: '14px', padding: '18px 20px', marginBottom: '14px' }}>
-            <div style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.12em', textTransform: 'uppercase', color: '#7c756c', marginBottom: '10px' }}>{t.key_points}</div>
-            {sop.points.map((p, i) => (
-              <div key={i} style={{ display: 'flex', gap: '10px', padding: '8px 0', borderBottom: '1px solid #f3ede3' }}><span style={{ color: '#2e9e57', fontWeight: 800, flex: 'none' }}>✓</span><span style={{ fontSize: '14px', color: '#2a2620', lineHeight: 1.45 }}>{p}</span></div>
-            ))}
-          </div>
-          <div style={{ background: '#fbe9d6', border: '1px solid #f0c79a', borderLeft: '3px solid #e8631a', borderRadius: '12px', padding: '16px 18px' }}>
-            <div style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.12em', textTransform: 'uppercase', color: '#b1470f', marginBottom: '6px' }}>{t.important}</div>
-            <div style={{ fontSize: '14px', color: '#7a3d15', lineHeight: 1.5 }}>{sop.important}</div>
-          </div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', margin: '14px 0 4px' }}><span style={{ font: "600 13px 'IBM Plex Mono'", letterSpacing: '.1em', color: sop.accent || '#f07f13' }}>SOP {sop.no}</span></div>
+      <h1 style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: 'clamp(26px,4.5vw,38px)', margin: '0 0 6px', color: '#17130f', letterSpacing: '-.02em' }}>{sop.title}</h1>
+      {sop.summary && <div style={{ fontSize: '15px', color: '#7c756c', marginBottom: '18px' }}>{sop.summary}</div>}
+      {sop.img && <img src={sop.img} alt={sop.title} style={{ width: '100%', borderRadius: '14px', border: '1px solid #e4ded4', boxShadow: '0 8px 24px rgba(0,0,0,.08)', marginBottom: '20px' }} />}
+
+      {(sop.sections || []).map((sec, si) => (
+        <div key={si} style={{ marginBottom: '20px' }}>
+          <h2 style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: '18px', color: '#17130f', margin: '0 0 12px', lineHeight: 1.25 }}>{sec.heading}</h2>
+          {sec.blocks.map((b, bi) => <Block key={bi} b={b} />)}
         </div>
-      </div>
+      ))}
     </div>
   );
 }
@@ -95,6 +91,19 @@ export function SopDetail({ v }) {
 function Block({ b }) {
   if (b.t === 'lead') return <p style={{ fontSize: '16px', lineHeight: 1.6, color: '#3a352e', fontWeight: 600, margin: '0 0 12px' }}>{b.text}</p>;
   if (b.t === 'p') return <p style={{ fontSize: '15px', lineHeight: 1.62, color: '#3a352e', margin: '0 0 12px' }}>{b.text}</p>;
+  if (b.t === 'steps') return (
+    <div style={{ margin: '0 0 14px' }}>
+      {b.items.map((st, i) => (
+        <div key={i} style={{ display: 'flex', gap: '12px', padding: '8px 0', borderBottom: i < b.items.length - 1 ? '1px solid #f3ede3' : 'none' }}>
+          <span style={{ flex: 'none', width: '26px', height: '26px', borderRadius: '50%', background: '#17130f', color: '#f6f3ee', display: 'flex', alignItems: 'center', justifyContent: 'center', font: "800 12px 'Archivo'", marginTop: '1px' }}>{st.n}</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '14.5px', color: '#17130f' }}>{st.title}</div>
+            {st.text && <div style={{ fontSize: '14px', color: '#5c5340', lineHeight: 1.5, marginTop: '2px' }}>{st.text}</div>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
   if (b.t === 'ul') return (
     <div style={{ margin: '0 0 12px' }}>
       {b.items.map((it, i) => (
