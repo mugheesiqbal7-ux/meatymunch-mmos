@@ -3,6 +3,7 @@ import { getT } from '../data/translations.js';
 import { supabase, isSupabaseConfigured, usernameToEmail } from '../lib/supabase.js';
 import { adminCall } from '../lib/admin.js';
 import { fetchOpenEntry, fetchOpenBreak, clockInDb, clockOutDb, startBreakDb, endBreakDb } from '../lib/timeclock.js';
+import { handbookChapters } from '../data/handbook.js';
 import {
   getChecklists, sops as sopsData, recipes as recipesData, chapters as chaptersData,
   inventory as inventoryData, shifts as shiftsData, modules as modulesData,
@@ -317,11 +318,13 @@ function deriveVals(s, a) {
   let sop = null;
   if (s.open && s.open.type === 'sop') sop = sopsData.find((x) => x.id === s.open.id);
 
-  // chapters
-  const chAll = chaptersData.map((c) => ({ ...c, statusLabel: c.status === 'done' ? 'fertig' : 'in Vorb.', statusStyle: { font: "600 10px 'IBM Plex Mono'", letterSpacing: '.06em', textTransform: 'uppercase', padding: '3px 9px', borderRadius: '20px', whiteSpace: 'nowrap', background: c.status === 'done' ? '#f0e6cd' : '#f0eae0', color: c.status === 'done' ? '#8a6a15' : '#a49c90' }, open: () => a.openDetail('ch', c.no) }));
-  const chaptersF = q ? chAll.filter((c) => (c.title + c.desc + c.no).toLowerCase().includes(q)) : chAll;
+  // chapters — vollständiges Handbuch (Band 1)
+  const chStatusStyle = { font: "600 10px 'IBM Plex Mono'", letterSpacing: '.06em', textTransform: 'uppercase', padding: '3px 9px', borderRadius: '20px', whiteSpace: 'nowrap', background: '#f0e6cd', color: '#8a6a15' };
+  const chSearchText = (c) => (c.no + ' ' + c.title + ' ' + c.thesis + ' ' + c.sections.map((sec) => sec.heading + ' ' + sec.eyebrow + ' ' + sec.blocks.map((b) => b.text || (b.items || []).join(' ') || (b.rows ? b.rows.flat().join(' ') : '')).join(' ')).join(' ')).toLowerCase();
+  const chMapped = handbookChapters.map((c) => ({ no: c.no, title: c.title, desc: c.thesis, read: c.readtime, statusLabel: 'fertig', statusStyle: chStatusStyle, open: () => a.openDetail('ch', c.no) }));
+  const chaptersF = q ? chMapped.filter((c, i) => chSearchText(handbookChapters[i]).includes(q)) : chMapped;
   let chapter = null;
-  if (s.open && s.open.type === 'ch') chapter = chaptersData.find((c) => c.no === s.open.id);
+  if (s.open && s.open.type === 'ch') chapter = handbookChapters.find((c) => c.no === s.open.id);
 
   // recipes
   const recAll = recipesData.map((r) => ({ ...r, open: () => a.openDetail('rez', r.id) }));

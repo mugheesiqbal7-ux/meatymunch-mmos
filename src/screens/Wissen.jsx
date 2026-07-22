@@ -92,23 +92,61 @@ export function SopDetail({ v }) {
   );
 }
 
+function Block({ b }) {
+  if (b.t === 'lead') return <p style={{ fontSize: '16px', lineHeight: 1.6, color: '#3a352e', fontWeight: 600, margin: '0 0 12px' }}>{b.text}</p>;
+  if (b.t === 'p') return <p style={{ fontSize: '15px', lineHeight: 1.62, color: '#3a352e', margin: '0 0 12px' }}>{b.text}</p>;
+  if (b.t === 'ul') return (
+    <div style={{ margin: '0 0 12px' }}>
+      {b.items.map((it, i) => (
+        <div key={i} style={{ display: 'flex', gap: '10px', padding: '5px 0' }}><span style={{ color: '#f07f13', fontWeight: 800, flex: 'none', lineHeight: 1.5 }}>▸</span><span style={{ fontSize: '15px', color: '#2a2620', lineHeight: 1.55 }}>{it}</span></div>
+      ))}
+    </div>
+  );
+  if (b.t === 'box') return (
+    <div style={{ background: '#f7f0e2', border: '1px solid #e5d6b3', borderLeft: '3px solid #b8912e', borderRadius: '12px', padding: '14px 16px', margin: '4px 0 14px' }}>
+      {b.label && <div style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.1em', textTransform: 'uppercase', color: '#8a6a15', marginBottom: '6px' }}>{b.label}</div>}
+      <div style={{ fontSize: '14.5px', color: '#5c5340', lineHeight: 1.55 }}>{b.text}</div>
+    </div>
+  );
+  if (b.t === 'table') return (
+    <div style={{ overflowX: 'auto', margin: '0 0 14px' }}>
+      <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: '14px' }}>
+        <tbody>
+          {b.rows.map((r, i) => (
+            <tr key={i}>
+              {r.map((c, j) => (
+                <td key={j} style={{ border: '1px solid #eae3d6', padding: '8px 11px', color: j === 0 ? '#17130f' : '#3a352e', fontWeight: j === 0 ? 600 : 400, verticalAlign: 'top', background: i === 0 ? '#faf7f2' : '#fff' }}>{c}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+  return null;
+}
+
 export function ChapterDetail({ v }) {
   const { t, chapter } = v;
   if (!chapter) return null;
   return (
-    <div style={{ animation: 'mmfade .3s ease', maxWidth: '720px' }}>
+    <div style={{ animation: 'mmfade .3s ease', maxWidth: '760px' }}>
       <button onClick={v.back} style={v.backBtnStyle}>← {t.back}</button>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', margin: '14px 0 2px' }}><span style={{ fontFamily: 'Archivo', fontWeight: 900, fontSize: '44px', color: '#e9e2d6', lineHeight: .9 }}>{chapter.no}</span></div>
       <h1 style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: 'clamp(24px,4vw,34px)', margin: '0 0 6px', color: '#17130f', letterSpacing: '-.02em' }}>{chapter.title}</h1>
-      <div style={{ font: "500 12px 'IBM Plex Mono'", color: '#a49c90', marginBottom: '18px' }}>{t.readtime} {chapter.read}</div>
-      <p style={{ fontSize: '17px', lineHeight: 1.6, color: '#3a352e', margin: '0 0 20px' }}>{chapter.lead}</p>
-      <div style={{ background: '#fff', border: '1px solid #e4ded4', borderRadius: '14px', padding: '20px 22px' }}>
-        <div style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.12em', textTransform: 'uppercase', color: '#7c756c', marginBottom: '12px' }}>{t.key_points}</div>
-        {chapter.points.map((p, i) => (
-          <div key={i} style={{ display: 'flex', gap: '12px', padding: '9px 0', borderBottom: '1px solid #f3ede3' }}><span style={{ color: '#b8912e', fontWeight: 800, flex: 'none' }}>▸</span><span style={{ fontSize: '15px', color: '#2a2620', lineHeight: 1.5 }}>{p}</span></div>
-        ))}
-      </div>
-      <div style={{ marginTop: '16px', fontSize: '13px', color: '#a49c90', fontStyle: 'italic' }}>{t.fulltext_note}</div>
+      {chapter.readtime && <div style={{ font: "500 12px 'IBM Plex Mono'", color: '#a49c90', marginBottom: '16px' }}>{t.readtime} {chapter.readtime}</div>}
+      {chapter.thesis && <p style={{ fontSize: '17px', lineHeight: 1.6, color: '#3a352e', margin: '0 0 24px', fontWeight: 500 }}>{chapter.thesis}</p>}
+
+      {chapter.sections.map((sec, si) => (
+        <div key={si} style={{ marginBottom: '22px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
+            {sec.index && <span style={{ font: "600 12px 'IBM Plex Mono'", color: '#e8631a', letterSpacing: '.06em' }}>{sec.index}</span>}
+            {sec.eyebrow && <span style={{ font: "600 11px 'IBM Plex Mono'", letterSpacing: '.14em', textTransform: 'uppercase', color: '#b8912e' }}>{sec.eyebrow}</span>}
+          </div>
+          <h2 style={{ fontFamily: 'Archivo', fontWeight: 800, fontSize: '19px', color: '#17130f', margin: '0 0 12px', lineHeight: 1.2 }}>{sec.heading}</h2>
+          {sec.blocks.map((b, bi) => <Block key={bi} b={b} />)}
+        </div>
+      ))}
     </div>
   );
 }
